@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project
+        xmlns="http://maven.apache.org/POM/4.0.0"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
+                            http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>br.com.herberton.puc.tcc</groupId>
+    <artifactId>vendas</artifactId>
+    <version>1.0.0-SNAPSHOT</version>
+    <name>br.com.herberton.puc.tcc.vendas</name>
+    <packaging>pom</packaging>
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <!-- PLUGINS -->
+        <property.maven-release-plugin.version>2.5.2</property.maven-release-plugin.version>
+        <property.maven-compiler-plugin.version>3.1</property.maven-compiler-plugin.version>
+        <property.maven-war-plugin.version>2.6</property.maven-war-plugin.version>
+        <!-- JAVA SE -->
+        <property.java-se.version>1.8</property.java-se.version>
+    </properties>
+    <dependencyManagement>
+        <dependencies>
+        </dependencies>
+    </dependencyManagement>
+    <dependencies>
+        <!-- TEST -->
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>4.12</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.hsqldb</groupId>
+            <artifactId>hsqldb</artifactId>
+            <version>2.4.0</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.hibernate</groupId>
+            <artifactId>hibernate-entitymanager</artifactId>
+            <version>5.2.4.Final</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-all</artifactId>
+            <version>1.10.19</version>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+    <build>
+        <finalName>${project.artifactId}-${project.version}</finalName>
+        <plugins>
+            <!-- MAVEN COMPILER PLUGIN -->
+            <plugin>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>${property.maven-compiler-plugin.version}</version>
+                <configuration>
+                    <source>${property.java-se.version}</source>
+                    <target>${property.java-se.version}</target>
+                    <encoding>${project.build.sourceEncoding}</encoding>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+    <modules>
+    </modules>
+</project>
