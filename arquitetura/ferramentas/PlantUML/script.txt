@@ -1,0 +1,103 @@
+@startuml
+
+	skinparam componentStyle uml2
+
+	[Clientes Especiais]
+	[Fabricantes]
+	[Revendedores]
+	[Fornecedores]
+	[Parceiros de Entrega]
+	
+	frame "Agro" {
+	
+		node "Cadastros WEB Server" { 
+			[Cadastros WEB] 
+		}
+		node "Vendas WEB Server" { 
+			[Vendas WEB] 
+		}
+		node "Estoque WEB Server" { 
+			[Estoque WEB] 
+		}
+		node "Descarte WEB Server" { 
+			[Descarte WEB] 
+		}
+		node "Logistica WEB Server" { 
+			[Logistica WEB] 
+		}
+		node "Relatorios WEB Server" { 
+			[Relatorios WEB] 
+		}
+	
+		node "API Gateway Server" { 
+			[API Gateway] 
+		}
+		
+		node "Cadastros APP Server" { 
+			[Cadastros APP] 
+		}
+		node "Vendas APP Server" { 
+			[Vendas APP] 
+		}
+		node "Estoque APP Server" { 
+			[Estoque APP] 
+		}
+		node "Descarte APP Server" { 
+			[Descarte APP] 
+		}
+		node "Logistica APP Server" { 
+			[Logistica APP] 
+		}
+		node "Relatorios APP Server" { 
+			[Relatorios APP] 
+		}
+		
+		database  "Cadastros DB Server" { 
+			[Cadastros DB] 
+		}
+		database  "Vendas DB Server" { 
+			[Vendas DB] 
+		}
+		database  "Estoque DB Server" { 
+			[Estoque DB] 
+		}
+		database  "Descarte DB Server" { 
+			[Descarte DB] 
+		}
+		database  "Logistica DB Server" { 
+			[Logistica DB] 
+		}
+		database  "Relatorios DB Server" { 
+			[Relatorios DB] 
+		}
+	
+		[Cadastros WEB]	-down- [API Gateway]
+		[Vendas WEB] -down- [API Gateway]
+		[Estoque WEB] -down- [API Gateway]
+		[Descarte WEB] -down- [API Gateway]
+		[Logistica WEB] -down- [API Gateway]
+		[Relatorios WEB] -down- [API Gateway]
+		
+		[Cadastros APP]	-up- [API Gateway]
+		[Vendas APP] -up- [API Gateway]
+		[Estoque APP] -up- [API Gateway]
+		[Descarte APP] -up- [API Gateway]
+		[Logistica APP] -up- [API Gateway]
+		[Relatorios APP] -up- [API Gateway]
+		
+		[Cadastros APP]	-down- [Cadastros DB]
+		[Vendas APP] -down- [Vendas DB]
+		[Estoque APP] -down- [Estoque DB]
+		[Descarte APP] -down- [Descarte DB]
+		[Logistica APP] -down- [Logistica DB]
+		[Relatorios APP] -down- [Relatorios DB]
+
+	}
+	
+	[Clientes Especiais] -up- [API Gateway]
+	[Fabricantes] -up- [API Gateway]
+	[Revendedores] -left- [API Gateway]
+	[Fornecedores] -down- [API Gateway]
+	[Parceiros de Entrega] -down- [API Gateway]
+	
+@enduml
