@@ -1,103 +1,125 @@
 @startuml
 
 	skinparam componentStyle uml2
-
-	[Clientes Especiais]
-	[Fabricantes]
-	[Revendedores]
-	[Fornecedores]
-	[Parceiros de Entrega]
+	
+	actor Cliente 				as AC
+	actor :Cliente Especial:	as ACE
+	actor :Vendedores:			as AV
+	
+	[Clientes Especiais] 	as CCE
+	[Fabricantes] 			as CFA
+	[Revendedores] 			as CR
+	[Fornecedores] 			as CFO
+	[Parceiros de Entrega] 	as CPE
 	
 	frame "Agro" {
-	
-		node "Cadastros WEB Server" { 
-			[Cadastros WEB] 
+		
+		frame "DMZ" {
+		
+			node "Autenticacao Server" { 
+				[Autenticacao]  		as CA
+			}
+			
+			node "Cadastros WEB Server" { 
+				[Cadastros WEB] 		as CWC
+			}
+			node "Vendas WEB Server" { 
+				[Vendas WEB]			as CWV
+			}
+			node "SCM WEB Server" { 
+				[Estoque WEB] 			as CWE
+				[Descarte WEB]			as CWD
+				[Logistica WEB]			as CWL
+			}
+			node "Relatorios WEB Server" { 
+				[Relatorios WEB] 		as CWR
+			}
+			node "API Gateway External Server" { 
+				[API Gateway External]	as CAGE
+			}
 		}
-		node "Vendas WEB Server" { 
-			[Vendas WEB] 
-		}
-		node "Estoque WEB Server" { 
-			[Estoque WEB] 
-		}
-		node "Descarte WEB Server" { 
-			[Descarte WEB] 
-		}
-		node "Logistica WEB Server" { 
-			[Logistica WEB] 
-		}
-		node "Relatorios WEB Server" { 
-			[Relatorios WEB] 
-		}
-	
+			
 		node "API Gateway Server" { 
-			[API Gateway] 
+			[API Gateway] 				as CAG
 		}
 		
 		node "Cadastros APP Server" { 
-			[Cadastros APP] 
+			[Cadastros APP]				as CAC
 		}
 		node "Vendas APP Server" { 
-			[Vendas APP] 
+			[Vendas APP] 				as CAV
 		}
-		node "Estoque APP Server" { 
-			[Estoque APP] 
-		}
-		node "Descarte APP Server" { 
-			[Descarte APP] 
-		}
-		node "Logistica APP Server" { 
-			[Logistica APP] 
+		node "SCM APP Server" { 
+			[Estoque APP] 				as CAE
+			[Descarte APP]				as CAD
+			[Logistica APP] 			as CAL
 		}
 		node "Relatorios APP Server" { 
-			[Relatorios APP] 
+			[Relatorios APP] 			as CAR
 		}
 		
 		database  "Cadastros DB Server" { 
-			[Cadastros DB] 
+			[Cadastros DB] 				as CDC
 		}
 		database  "Vendas DB Server" { 
-			[Vendas DB] 
+			[Vendas DB] 				as CDV
 		}
-		database  "Estoque DB Server" { 
-			[Estoque DB] 
+		database  "SCM Estoque DB Server" { 
+			[Estoque DB] 				as CDE
 		}
-		database  "Descarte DB Server" { 
-			[Descarte DB] 
+		database  "SCM Descarte DB Server" { 
+			[Descarte DB] 				as CDD
 		}
-		database  "Logistica DB Server" { 
-			[Logistica DB] 
+		database  "SCM Logistica DB Server" { 
+			[Logistica DB] 				as CDL
 		}
 		database  "Relatorios DB Server" { 
-			[Relatorios DB] 
+			[Relatorios DB] 			as CDR
 		}
-	
-		[Cadastros WEB]	-down- [API Gateway]
-		[Vendas WEB] -down- [API Gateway]
-		[Estoque WEB] -down- [API Gateway]
-		[Descarte WEB] -down- [API Gateway]
-		[Logistica WEB] -down- [API Gateway]
-		[Relatorios WEB] -down- [API Gateway]
 		
-		[Cadastros APP]	-up- [API Gateway]
-		[Vendas APP] -up- [API Gateway]
-		[Estoque APP] -up- [API Gateway]
-		[Descarte APP] -up- [API Gateway]
-		[Logistica APP] -up- [API Gateway]
-		[Relatorios APP] -up- [API Gateway]
-		
-		[Cadastros APP]	-down- [Cadastros DB]
-		[Vendas APP] -down- [Vendas DB]
-		[Estoque APP] -down- [Estoque DB]
-		[Descarte APP] -down- [Descarte DB]
-		[Logistica APP] -down- [Logistica DB]
-		[Relatorios APP] -down- [Relatorios DB]
+		CA -right- CAGE
+		CA -down- CWC
+		CA -down- CWV
+		CA -down- CWE
+		CA -down- CWD
+		CA -down- CWL
+		CA -down- CWR
 
+		CAGE -down- CAG
+		
+		CWC	-down- CAG
+		CWV -down- CAG
+		CWE -down- CAG
+		CWD -down- CAG
+		CWL -down- CAG
+		CWR -down- CAG
+		
+		CAC	-up- CAG
+		CAV -up- CAG
+		CAE -up- CAG
+		CAD -up- CAG
+		CAL -up- CAG
+		CAR -up- CAG
+		
+		CAC	-down- CDC
+		CAV -down- CDV
+		CAE -down- CDE
+		CAD -down- CDD
+		CAL -down- CDL
+		CAR -down- CDR
+		
 	}
 	
-	[Clientes Especiais] -up- [API Gateway]
-	[Fabricantes] -up- [API Gateway]
-	[Revendedores] -left- [API Gateway]
-	[Fornecedores] -down- [API Gateway]
-	[Parceiros de Entrega] -down- [API Gateway]
+	CCE -down- CAGE
+	CFA -down- CAGE
+	CR -down- CAGE
+	CFO -down- CAGE
+	CPE -down- CAGE
+	
+	AC -down-> CA
+	AV -down-> CA
+	ACE -down-> CA
+	ACE -down-> CCE
+	
 	
 @enduml
