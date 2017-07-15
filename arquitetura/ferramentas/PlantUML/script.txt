@@ -2,9 +2,10 @@
 
 	skinparam componentStyle uml2
 	
-	actor Cliente 				as AC
-	actor :Cliente Especial:	as ACE
+	actor Clientes				as AC
+	actor :Clientes Especiais: 				as ACE
 	actor :Vendedores:			as AV
+	actor :Funcionarios:		as AF
 	
 	[Clientes Especiais] 	as CCE
 	[Fabricantes] 			as CFA
@@ -12,83 +13,118 @@
 	[Fornecedores] 			as CFO
 	[Parceiros de Entrega] 	as CPE
 	
-	frame "Agro" {
+	
 		
-		frame "DMZ" {
+		frame "DMZ 1" {
 		
-			node "Autenticacao Server" { 
-				[Autenticacao]  		as CA
+			node "Portal WEB Server" { 
+				component CWAA [
+					Portal WEB
+					(Autenticacao e Autorizacao)
+				]
 			}
-			
 			node "Cadastros WEB Server" { 
-				[Cadastros WEB] 		as CWC
+				[Cadastros WEB] 				as CWC
 			}
 			node "Vendas WEB Server" { 
-				[Vendas WEB]			as CWV
+				[Vendas WEB]					as CWV
+				[Propagandas e Promocoes WEB]	as CWPP
 			}
 			node "SCM WEB Server" { 
-				[Estoque WEB] 			as CWE
-				[Descarte WEB]			as CWD
-				[Logistica WEB]			as CWL
+				[Estoque WEB] 					as CWE
+				[Descarte WEB]					as CWD
+				[Logistica WEB]					as CWL
 			}
 			node "Relatorios WEB Server" { 
-				[Relatorios WEB] 		as CWR
-			}
-			node "API Gateway External Server" { 
-				[API Gateway External]	as CAGE
+				[Relatorios WEB] 				as CWR
 			}
 		}
+		
+		frame "DMZ 2" {
+		
+			node "E-commerce WEB Server" { 
+				[E-commerce WEB]				as CWEC
+			}
+			node "API Gateway EDI Server" { 
+				[API Gateway EDI]				as CAGE
+			}
+		}
+		
 			
 		node "API Gateway Server" { 
-			[API Gateway] 				as CAG
+			[API Gateway] 						as CAG
 		}
 		
 		node "Cadastros APP Server" { 
-			[Cadastros APP]				as CAC
+			[Cadastros APP]						as CAC
 		}
 		node "Vendas APP Server" { 
-			[Vendas APP] 				as CAV
+			[Propagandas e Promocoes APP]		as CAPP
+			[Vendas APP] 						as CAV
+			
 		}
 		node "SCM APP Server" { 
-			[Estoque APP] 				as CAE
-			[Descarte APP]				as CAD
-			[Logistica APP] 			as CAL
+		
+			[Descarte APP]						as CAD
+			[Estoque APP] 						as CAE
+			[Logistica APP] 					as CAL
 		}
 		node "Relatorios APP Server" { 
-			[Relatorios APP] 			as CAR
+			[Relatorios APP] 					as CAR
+		}
+		
+		database  "Autenticacao DB Server" { 
+			[Active Directory] 					as AD
 		}
 		
 		database  "Cadastros DB Server" { 
-			[Cadastros DB] 				as CDC
+			[Cadastros DB] 						as CDC
 		}
 		database  "Vendas DB Server" { 
-			[Vendas DB] 				as CDV
+			[Vendas DB] 						as CDV
+		}
+		database  "Propagandas e Promocoes DB Server" { 
+			[Propagandas e Promocoes DB]		as CDPP
 		}
 		database  "SCM Estoque DB Server" { 
-			[Estoque DB] 				as CDE
+			[Estoque DB] 						as CDE
 		}
 		database  "SCM Descarte DB Server" { 
-			[Descarte DB] 				as CDD
+			[Descarte DB] 						as CDD
 		}
 		database  "SCM Logistica DB Server" { 
-			[Logistica DB] 				as CDL
+			[Logistica DB] 						as CDL
 		}
 		database  "Relatorios DB Server" { 
-			[Relatorios DB] 			as CDR
+			[Relatorios DB] 					as CDR
 		}
 		
-		CA -right- CAGE
-		CA -down- CWC
-		CA -down- CWV
-		CA -down- CWE
-		CA -down- CWD
-		CA -down- CWL
-		CA -down- CWR
+		frame "Legado" {
+			node "Mainframe" {
+				[Faturamento]					as CMF
+			}
+		}
+		
+		node "Servidor de Arquivos" {
+			folder "Pasta" {
+				[Arquivo BATCH]						as ARQ
+			}
+		}
+		
+		CWAA -down- CWC
+		CWAA -down- CWV
+		CWAA -down- CWPP
+		CWAA -down- CWE
+		CWAA -down- CWD
+		CWAA -down- CWL
+		CWAA -down- CWR
 
 		CAGE -down- CAG
 		
+		CWEC -down- CAG
 		CWC	-down- CAG
 		CWV -down- CAG
+		CWPP -down- CAG
 		CWE -down- CAG
 		CWD -down- CAG
 		CWL -down- CAG
@@ -96,6 +132,7 @@
 		
 		CAC	-up- CAG
 		CAV -up- CAG
+		CAPP -up- CAG
 		CAE -up- CAG
 		CAD -up- CAG
 		CAL -up- CAG
@@ -103,12 +140,19 @@
 		
 		CAC	-down- CDC
 		CAV -down- CDV
+		CAPP -down- CDPP
 		CAE -down- CDE
 		CAD -down- CDD
 		CAL -down- CDL
 		CAR -down- CDR
 		
-	}
+		CWAA -left- AD
+		CAC -up- AD
+		
+		CMF -up- ARQ
+		CAV -down- ARQ
+		
+	
 	
 	CCE -down- CAGE
 	CFA -down- CAGE
@@ -116,10 +160,10 @@
 	CFO -down- CAGE
 	CPE -down- CAGE
 	
-	AC -down-> CA
-	AV -down-> CA
-	ACE -down-> CA
-	ACE -down-> CCE
-	
+	AC -down- CWEC
+	ACE -down- CWEC
+	ACE -down- CCE
+	AV -down- CWAA
+	AF -down- CWAA
 	
 @enduml
