@@ -107,6 +107,7 @@
 		frame "Legado" {
 			node "Mainframe" {
 				[Faturamento]					as CMF
+				[Tributacao]					as CMT
 			}
 		}
 		
@@ -157,6 +158,7 @@
 		CAC -up- AD
 		
 		CMF -up- ARQ
+		CMT -up- ARQ
 		CAV -down- ARQ
 		CAR - ARQ
 		
