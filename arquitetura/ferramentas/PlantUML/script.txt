@@ -2,16 +2,16 @@
 
 	skinparam componentStyle uml2
 	
-	actor Clientes				as AC
-	actor :Clientes Especiais: 				as ACE
-	actor :Vendedores:			as AV
-	actor :Funcionarios:		as AF
+	actor Clientes								as AC
+	actor :Clientes Especiais: 					as ACE
+	actor :Vendedores:							as AV
+	actor :Funcionarios:						as AF
 	
-	[Clientes Especiais] 	as CCE
-	[Fabricantes] 			as CFA
-	[Revendedores] 			as CR
-	[Fornecedores] 			as CFO
-	[Parceiros de Entrega] 	as CPE
+	[Clientes Especiais] 						as CCE
+	[Fabricantes] 								as CFA
+	[Revendedores] 								as CR
+	[Fornecedores] 								as CFO
+	[Parceiros de Entrega] 						as CPE
 	
 	
 		
@@ -72,8 +72,11 @@
 		node "Relatorios APP Server" { 
 			[Relatorios APP] 					as CAR
 		}
+		node "E-commerce APP Server" { 
+			[E-commerce APP] 					as CAEC
+		}
 		
-		database  "Autenticacao DB Server" { 
+		database  "Active Directory Server" { 
 			[Active Directory] 					as AD
 		}
 		
@@ -98,6 +101,9 @@
 		database  "Relatorios DB Server" { 
 			[Relatorios DB] 					as CDR
 		}
+		database  "E-commerce DB Server" { 
+			[E-commerce DB] 					as CDEC
+		}
 		
 		frame "Legado" {
 			node "Mainframe" {
@@ -107,7 +113,7 @@
 		
 		node "Servidor de Arquivos" {
 			folder "Pasta" {
-				[Arquivo BATCH]						as ARQ
+				[Arquivo BATCH]					as ARQ
 			}
 		}
 		
@@ -137,6 +143,7 @@
 		CAD -up- CAG
 		CAL -up- CAG
 		CAR -up- CAG
+		CAEC -up- CAG
 		
 		CAC	-down- CDC
 		CAV -down- CDV
@@ -145,6 +152,7 @@
 		CAD -down- CDD
 		CAL -down- CDL
 		CAR -down- CDR
+		CAEC -down- CDEC
 		
 		CWAA -left- AD
 		CAC -up- AD
