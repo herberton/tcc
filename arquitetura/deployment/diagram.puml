@@ -1,0 +1,179 @@
+@startuml
+
+	skinparam componentStyle uml2
+	
+	actor Clientes								as AC
+	actor :Clientes Especiais: 					as ACE
+	actor :Vendedores:							as AV
+	actor :Funcionarios:						as AF
+	
+	[Clientes Especiais] 						as CCE
+	[Fabricantes] 								as CFA
+	[Revendedores] 								as CR
+	[Fornecedores] 								as CFO
+	[Parceiros de Entrega] 						as CPE
+	
+	
+		
+		frame "DMZ 1" {
+		
+			node "Portal WEB Server" { 
+				component CWAA [
+					Portal WEB
+					(Autenticacao e Autorizacao)
+				]
+			}
+			node "Cadastros WEB Server" { 
+				[Cadastros WEB] 				as CWC
+			}
+			node "Vendas WEB Server" { 
+				[Vendas WEB]					as CWV
+				[Propagandas e Promocoes WEB]	as CWPP
+			}
+			node "SCM WEB Server" { 
+				[Estoque WEB] 					as CWE
+				[Descarte WEB]					as CWD
+				[Logistica WEB]					as CWL
+			}
+			node "Relatorios WEB Server" { 
+				[Relatorios WEB] 				as CWR
+			}
+		}
+		
+		frame "DMZ 2" {
+		
+			node "E-commerce WEB Server" { 
+				[E-commerce WEB]				as CWEC
+			}
+			node "API Gateway EDI Server" { 
+				[API Gateway EDI]				as CAGE
+			}
+		}
+		
+			
+		node "API Gateway Server" { 
+			[API Gateway] 						as CAG
+		}
+		
+		node "Cadastros APP Server" { 
+			[Cadastros APP]						as CAC
+		}
+		node "Vendas APP Server" { 
+			[Vendas APP] 						as CAV
+			[Propagandas e Promocoes APP]		as CAPP
+			
+		}
+		node "SCM APP Server" { 
+			[Descarte APP]						as CAD
+			[Estoque APP] 						as CAE
+			[Logistica APP] 					as CAL
+		}
+		node "Relatorios APP Server" { 
+			[Relatorios APP] 					as CAR
+		}
+		node "E-commerce APP Server" { 
+			[E-commerce APP] 					as CAEC
+		}
+		
+		database  "Active Directory Server" { 
+			[Active Directory] 					as AD
+		}
+		
+		database  "Cadastros DB Server" { 
+			[Cadastros DB] 						as CDC
+		}
+		database  "Vendas DB Server" { 
+			[Vendas DB] 						as CDV
+		}
+		database  "Propagandas e Promocoes DB Server" { 
+			[Propagandas e Promocoes DB]		as CDPP
+		}
+		database  "SCM Estoque DB Server" { 
+			[Estoque DB] 						as CDE
+		}
+		database  "SCM Descarte DB Server" { 
+			[Descarte DB] 						as CDD
+		}
+		database  "SCM Logistica DB Server" { 
+			[Logistica DB] 						as CDL
+		}
+		database  "Relatorios DB Server" { 
+			[Relatorios DB] 					as CDR
+		}
+		database  "E-commerce DB Server" { 
+			[E-commerce DB] 					as CDEC
+		}
+		
+		frame "Legado" {
+			node "Mainframe" {
+				[Faturamento]					as CMF
+				[Tributacao]					as CMT
+			}
+		}
+		
+		node "Servidor de Arquivos" {
+			folder "Pastas" {
+				[Arquivos BATCH]				as ARQ
+			}
+		}
+		
+		CWAA -down- CWC
+		CWAA -down- CWV
+		CWAA -down- CWPP
+		CWAA -down- CWE
+		CWAA -down- CWD
+		CWAA -down- CWL
+		CWAA -down- CWR
+
+		CAGE -down- CAG
+		
+		CWEC -down- CAG
+		CWC	-down- CAG
+		CWV -down- CAG
+		CWPP -down- CAG
+		CWE -down- CAG
+		CWD -down- CAG
+		CWL -down- CAG
+		CWR -down- CAG
+		
+		CAC	-up- CAG
+		CAV -up- CAG
+		CAPP -up- CAG
+		CAE -up- CAG
+		CAD -up- CAG
+		CAL -up- CAG
+		CAR -up- CAG
+		CAEC -up- CAG
+		
+		CAC	-down- CDC
+		CAV -down- CDV
+		CAPP -down- CDPP
+		CAE -down- CDE
+		CAD -down- CDD
+		CAL -down- CDL
+		CAR -down- CDR
+		CAEC -down- CDEC
+		
+		CWAA -left- AD
+		CAC -up- AD
+		
+		CMF -up- ARQ
+		CMT -up- ARQ
+		CAV -down- ARQ
+		CAR - ARQ
+		
+	
+	
+	CCE -down- CAGE
+	CFA -down- CAGE
+	CR -down- CAGE
+	CFO -down- CAGE
+	CPE -down- CAGE
+	
+	AC -down- CWEC
+	ACE -down- CWEC
+	ACE -down- CCE
+	AV -down- CWAA
+	AF -down- CWAA
+	
+@enduml
