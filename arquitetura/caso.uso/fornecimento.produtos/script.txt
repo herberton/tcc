@@ -1,0 +1,32 @@
+@startuml
+
+	left to right direction
+
+	actor Administrador as ADM
+	actor Fornecedor	as FOR
+	
+	rectangle "Fornecimento de Produtos" {
+	
+		package ActiveDirectory {
+			usecase (Cadastra Usuario)	as CAD_USU
+		}
+		
+		package Portal-WEB  {
+			usecase (Cadastra Fornecedor)	as CAD_FOR
+		}
+		
+		package "API-Gateway EDI" {
+			usecase (Fornece Produto)	as FOR_PRO
+		}
+	
+	}
+	
+	CAD_FOR ..> CAD_USU :<<include>>
+	
+	FOR_PRO .up.> CAD_FOR :<<extend>>
+	
+	ADM --> CAD_FOR
+	FOR --> FOR_PRO
+	
+		
+@enduml
