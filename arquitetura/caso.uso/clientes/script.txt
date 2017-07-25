@@ -1,0 +1,69 @@
+@startuml
+	
+	left to right direction
+
+	actor Administrador 		as ADM
+	actor Cliente				as CLI
+	actor :Cliente Especial:	as CLI_ESP
+	
+	rectangle "Clientes" {
+	
+		package ActiveDirectory {
+			usecase (Cadastra Usuario)	as CAD_USU
+		}
+		
+		package Cadastro  {
+			usecase (Cadastra Cliente Especial)									as CAD_CLI_ESP
+			usecase (Inclui Solicitacao de\nCadastramento de Cliente Especial)	as INC_SOL_CAD_CLI_ESP
+			usecase (Lista Solicitacoes de\nCadastramento de Cliente Especial)	as LIS_SOL_CAD_CLI_ESP
+		}
+		
+		package "API-Gateway EDI" {
+			usecase (Verifica Preco)		as VER_PRE_API
+			usecase (Solicita Orcamento)	as SOL_ORC_API
+			usecase (Lista Produtos)		as LIS_PRO_API
+		}
+		
+		package "E-Commerce" {
+			usecase (Cadastra Cliente)		as CAD_CLI
+			usecase (Verifica Preco)		as VER_PRE
+			usecase (Solicita Orcamento)	as SOL_ORC
+			usecase (Realiza Compra)		as REA_COM
+			usecase (Lista Produtos)		as LIS_PRO
+		}
+	
+	}
+	
+	CAD_CLI -right-|> CAD_USU
+	
+	INC_SOL_CAD_CLI_ESP --> CAD_CLI :<<extend>>
+	LIS_SOL_CAD_CLI_ESP -right-> INC_SOL_CAD_CLI_ESP :<<extend>>
+	CAD_CLI_ESP			-right-> LIS_SOL_CAD_CLI_ESP :<<include>>
+	
+	REA_COM -right-> VER_PRE :<<include>>
+	
+	SOL_ORC --> CAD_CLI :<<extend>>
+	VER_PRE --> CAD_CLI :<<extend>>
+	REA_COM --> CAD_CLI :<<extend>>
+	LIS_PRO --> CAD_CLI :<<extend>>
+	
+	SOL_ORC_API --> CAD_CLI_ESP :<<extend>>
+	VER_PRE_API --> CAD_CLI_ESP :<<extend>>
+	LIS_PRO_API --> CAD_CLI_ESP :<<extend>>
+	
+	CLI_ESP --|> CLI
+	
+	
+	ADM -right-> CAD_CLI_ESP
+	
+	CLI -down-> CAD_CLI
+	CLI -down-> SOL_ORC
+	CLI -down-> VER_PRE
+	CLI -down-> REA_COM
+	CLI -down-> LIS_PRO
+	
+	CLI_ESP --> VER_PRE_API
+	CLI_ESP --> SOL_ORC_API
+	CLI_ESP --> LIS_PRO_API
+	
+@enduml
