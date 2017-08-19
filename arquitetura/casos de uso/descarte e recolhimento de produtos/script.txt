@@ -1,0 +1,58 @@
+@startuml
+
+	left to right direction
+
+	actor Administrador 			as ADM
+	actor "Fabricante/Revendedor"	as FAB_REV
+	actor Auditor					as AUD
+	
+	rectangle "Descarte de Embalagens e\nRecolhimento de Produtos Vencidos" {
+	
+		package ActiveDirectory {
+			usecase (Cadastra Usuario)	as CAD_USU
+		}
+		
+		package Cadastro  {
+			usecase (Cadastra Fabricante/Revendedor)									as CAD_FAB_REV
+			usecase (Lista Solicitacoes de\nCadastramento de\nFabricante/Revendedor)	as LIS_SOL_CAD_FAB_REV
+			usecase (Inclui Solicitacao de\nCadastramento de\nFabricante/Revendedor)			as INC_SOL_CAD_FAB_REV
+		}
+		
+		package "API-Gateway EDI" {
+			usecase (Recebe Notificacao de\nDescarte de Embalagens)								as REC_NOT_DES_EMB
+			usecase (Realiza Descarte de Embalagens)											as REA_DES_EMB
+			usecase (Recebe Notificacao para Recolhimento\nde Produtos Agrotoxicos Vencidos)	as REC_NOT_REC_PRO_AGRO_VEN
+			usecase (Recolhe Produtos Agrotoxicos Vencidos)										as REC_PRO_AGRO_VEN
+		}
+		
+		package "SCM" {
+			usecase (Envia Notificacao de\nDescarte de Embalagens)							as ENV_NOT_DES_EMB
+			usecase (Envia Notificacao para Recolhimento\nde Produtos Agrotoxicos Vencidos)	as ENV_NOT_REC_PRO_AGRO_VEN
+		}
+	
+	}
+	
+	CAD_FAB_REV -left-|> CAD_USU
+	CAD_FAB_REV .down.> LIS_SOL_CAD_FAB_REV :<<include>>
+	
+	REC_NOT_DES_EMB -up-> ENV_NOT_DES_EMB :<<include>>
+	REC_NOT_REC_PRO_AGRO_VEN -up-> ENV_NOT_REC_PRO_AGRO_VEN :<<include>>
+	
+	REA_DES_EMB -right-> REC_NOT_DES_EMB :<<include>>
+	REC_PRO_AGRO_VEN -left-> REC_NOT_REC_PRO_AGRO_VEN :<<include>>
+	
+	FAB_REV -up-> INC_SOL_CAD_FAB_REV
+	LIS_SOL_CAD_FAB_REV ..> INC_SOL_CAD_FAB_REV :<<extend>>	
+	
+	ADM -down-> CAD_FAB_REV
+	
+	FAB_REV <-up- REC_NOT_DES_EMB
+	FAB_REV <-up- REC_NOT_REC_PRO_AGRO_VEN
+	FAB_REV -up-> REA_DES_EMB
+	FAB_REV -up-> REC_PRO_AGRO_VEN
+	
+	AUD --> ENV_NOT_DES_EMB
+	AUD --> ENV_NOT_REC_PRO_AGRO_VEN
+	
+	
+@enduml

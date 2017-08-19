@@ -1,0 +1,51 @@
+@startuml
+	
+	left to right direction
+
+	actor Administrador			as ADM
+	actor Cliente				as CLI
+	actor :Cliente Especial:	as CLI_ESP
+	actor :Gestor de Marketing:	as GES_MAR
+	
+	rectangle "Divulgacao de Propagandas\ne Promocoes" {
+	
+		package ActiveDirectory {
+			usecase (Cadastra Usuario)	as CAD_USU
+		}
+		
+		package Cadastro  {
+			usecase (Cadastra Gestor de Marketing)	as CAD_GES_MAR
+		}
+		
+		package "API-Gateway EDI" {
+			usecase (Recebe Propaganda/Promocao)	as REC_PRO_API
+		}
+		
+		package "E-Commerce" {
+			usecase (Recebe Propaganda/Promocao)	as REC_PRO
+		}
+		
+		package Vendas {
+			usecase (Cadastra Propaganda/Promocao)	as CAD_PRO
+			usecase (Divulga Propaganda/Promocao)	as DIV_PRO
+			usecase (Lista Propaganda/Promocao)		as LIS_PRO
+		}
+	}
+	
+	CAD_GES_MAR --|> CAD_USU
+	
+	REC_PRO <-- DIV_PRO :<<include>>
+	REC_PRO_API <-- DIV_PRO :<<include>>
+	
+	CLI -left-|> CLI_ESP
+	
+	ADM --> CAD_GES_MAR
+	
+	GES_MAR -up-> DIV_PRO
+	GES_MAR -up-> CAD_PRO
+	GES_MAR -up-> LIS_PRO
+	
+	CLI <-- REC_PRO
+	CLI_ESP <-- REC_PRO_API
+	
+@enduml

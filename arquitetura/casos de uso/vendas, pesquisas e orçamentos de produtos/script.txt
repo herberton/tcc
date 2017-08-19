@@ -1,0 +1,93 @@
+@startuml
+	
+	left to right direction
+
+	actor Administrador 		as ADM
+	actor Cliente				as CLI
+	actor :Cliente Especial:	as CLI_ESP
+	actor "Vendedor"			as VEN
+	
+	rectangle "Vendas, Pesquisas e\nOrcamentos de Produtos" {
+	
+		package ActiveDirectory {
+			usecase (Cadastra Usuario)	as CAD_USU
+		}
+		
+		package Cadastro  {
+			usecase (Cadastra Cliente Especial)									as CAD_CLI_ESP
+			usecase (Lista Solicitacoes de\nCadastramento de Cliente Especial)	as LIS_SOL_CAD_CLI_ESP
+		}
+		
+		package "API-Gateway EDI" {
+			usecase (Verifica Preco)		as VER_PRE_API
+			usecase (Solicita Orcamento)	as SOL_ORC_API
+			usecase (Lista Produtos)		as LIS_PRO_API
+		}
+		
+		package "E-Commerce" {
+			usecase (Cadastra Cliente)											as CAD_CLI
+			usecase (Verifica Preco)											as VER_PRE
+			usecase (Solicita Orcamento)										as SOL_ORC
+			usecase (Realiza Compra)											as REA_COM
+			usecase (Lista Produtos)											as LIS_PRO
+			usecase (Inclui Solicitacao de\nCadastramento de Cliente Especial)	as INC_SOL_CAD_CLI_ESP
+		}
+		
+		package Vendas {
+			usecase (Lista produtos)	as LIS_PRO_VEN
+			usecase (Realiza Orcamento)	as REA_ORC_VEN
+			usecase (Verifica Preco)    as VER_PRE_VEN
+			usecase (Realiza Venda)		as REA_VEN
+			usecase (Cadastra Vendedor) as CAD_VEN
+		}
+	
+	}
+	
+	CAD_CLI --|> CAD_USU
+	CAD_VEN --|> CAD_USU
+	
+	
+	INC_SOL_CAD_CLI_ESP -down-> CAD_CLI :<<extend>>
+	LIS_SOL_CAD_CLI_ESP -left-> INC_SOL_CAD_CLI_ESP :<<extend>>
+	CAD_CLI_ESP			-left-> LIS_SOL_CAD_CLI_ESP :<<include>>
+	
+	SOL_ORC --> CAD_CLI :<<extend>>
+	VER_PRE --> CAD_CLI :<<extend>>
+	REA_COM --> CAD_CLI :<<extend>>
+	LIS_PRO --> CAD_CLI :<<extend>>
+	
+	SOL_ORC_API --> CAD_CLI_ESP :<<extend>>
+	VER_PRE_API --> CAD_CLI_ESP :<<extend>>
+	LIS_PRO_API --> CAD_CLI_ESP :<<extend>>
+	
+	
+	LIS_PRO_VEN -up-> CAD_VEN :<<extend>>
+	REA_ORC_VEN -up-> CAD_VEN :<<extend>>
+	REA_VEN -up-> CAD_VEN :<<extend>>
+	VER_PRE_VEN -up-> CAD_VEN :<<extend>>
+	
+	CLI_ESP --|> CLI
+	
+	
+	ADM -down-> CAD_CLI_ESP
+	ADM -down-> CAD_VEN
+	
+	
+	CLI -down-> CAD_CLI
+	CLI -down-> SOL_ORC
+	CLI -down-> VER_PRE
+	CLI -down-> REA_COM
+	CLI -down-> LIS_PRO
+	
+	CLI_ESP -down-> INC_SOL_CAD_CLI_ESP
+	
+	CLI_ESP -down-> VER_PRE_API
+	CLI_ESP -down-> SOL_ORC_API
+	CLI_ESP -down-> LIS_PRO_API
+	
+	VEN -up-> LIS_PRO_VEN
+	VEN -up-> REA_ORC_VEN
+	VEN -up-> REA_VEN
+	VEN -up-> VER_PRE_VEN
+	
+@enduml

@@ -1,0 +1,70 @@
+@startuml
+	
+	left to right direction
+
+	actor Administrador 							as ADM
+	actor Cliente									as CLI
+	actor :Cliente Especial:						as CLI_ESP
+	actor Vendedor									as VEN
+	actor "Parceiro de Entrega\n(Parceiro Externo)"	as PAR_ENT
+	actor "Entregador\n(Propria Empresa)"			as ENT
+	
+	rectangle "Logistica de Entrega\nde Produtos" {
+	
+		package ActiveDirectory {
+			usecase (Cadastra Usuario)	as CAD_USU
+		}
+		
+		package Cadastro  {
+			usecase (Cadastra Parceiro de Entrega)									as CAD_PAR_ENT
+			usecase (Cadastra Entregador)											as CAD_ENT
+			usecase (Lista Solicitacoes de\nCadastramento de Parceiro de Entrega)	as LIS_SOL_CAD_PAR_ENT
+		}
+		
+		package "API-Gateway EDI" {
+			usecase (Recebe entrega)	as REC_ENT_EXT
+		}
+		
+		package "E-Commerce" {
+			usecase (Realiza Compra)	as REA_COM
+		}
+		
+		package Vendas {
+			usecase (Realiza Venda)		as REA_VEN
+		}
+		
+		package SCM {
+			usecase (Inclui Solicitacao de\nCadastramento de Parceiro de Entrega)	as INC_SOL_CAD_PAR_ENT
+			usecase (Recebe entrega)												as REC_ENT
+		}
+	}
+	
+	CAD_PAR_ENT -right-|> CAD_USU
+	CAD_ENT -right-|> CAD_USU
+	
+	LIS_SOL_CAD_PAR_ENT -right-> INC_SOL_CAD_PAR_ENT :<<extend>>
+	CAD_PAR_ENT			--> LIS_SOL_CAD_PAR_ENT :<<include>>
+	
+	REC_ENT --> REA_VEN :<<extend>>
+	REC_ENT --> REA_COM :<<extend>>
+	
+	REC_ENT_EXT --> REA_VEN :<<extend>>
+	REC_ENT_EXT --> REA_COM :<<extend>>
+	
+	CLI_ESP -right-|> CLI
+	
+	
+	ADM --> CAD_ENT
+	ADM --> CAD_PAR_ENT
+	
+	CLI -up-> REA_COM
+	
+	PAR_ENT --> INC_SOL_CAD_PAR_ENT
+	
+	VEN -up-> REA_VEN
+	
+	ENT <-up- REC_ENT
+	
+	PAR_ENT <-- REC_ENT_EXT
+
+@enduml

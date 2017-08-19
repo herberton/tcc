@@ -1,0 +1,73 @@
+@startuml
+	
+	left to right direction
+
+	actor Administrador 		as ADM
+	actor Cliente				as CLI
+	actor :Cliente Especial:	as CLI_ESP
+	actor "Vendedor"			as VEN
+	actor "Fornecedor"			as FOR
+	
+	rectangle "Notificacao de Fornecedores\nde Produtos" {
+	
+		package ActiveDirectory {
+			usecase (Cadastra Usuario)	as CAD_USU
+		}
+		
+		package Cadastro  {
+			usecase (Lista Solicitacoes de\nCadastramento de Fornecedor)	as LIS_SOL_CAD_FOR
+			usecase (Cadastra Fornecedor)									as CAD_FOR
+		}
+		
+		package "API-Gateway EDI" {
+			usecase (Solicita Orcamento)	as SOL_ORC_API
+			usecase (Recebe Notificacao de\nOrcamento/Venda)	as NOT_FOR
+		}
+		
+		package "E-Commerce" {
+			usecase (Solicita Orcamento)	as SOL_ORC
+			usecase (Realiza Compra)		as REA_COM
+		}
+		
+		package Vendas {
+			usecase (Realiza Orcamento)	as REA_ORC_VEN
+			usecase (Realiza Venda)		as REA_VEN
+		}
+	
+		package SCM {
+			usecase (Inclui Solicitacao de\nCadastramento de Fornecedor)	as INC_SOL_CAD_FOR
+		}
+	}
+	
+	CAD_FOR --|> CAD_USU
+	
+	
+	CAD_FOR			-left-> LIS_SOL_CAD_FOR :<<include>>
+	LIS_SOL_CAD_FOR -right-> INC_SOL_CAD_FOR :<<extend>>
+	
+	NOT_FOR --> SOL_ORC :<<extend>>
+	NOT_FOR --> SOL_ORC_API :<<extend>>
+	NOT_FOR --> REA_ORC_VEN :<<extend>>
+	
+	NOT_FOR --> REA_COM :<<extend>>
+	NOT_FOR --> REA_VEN :<<extend>>
+	
+	CLI_ESP -right-|> CLI
+	
+	
+	ADM --> CAD_FOR
+	
+	
+	CLI -up-> SOL_ORC
+	CLI -up-> REA_COM
+	
+	FOR --> INC_SOL_CAD_FOR
+	
+	CLI_ESP -up-> SOL_ORC_API
+	
+	VEN -up-> REA_ORC_VEN
+	VEN -up-> REA_VEN
+	
+	NOT_FOR --> FOR
+	
+@enduml
