@@ -10,9 +10,8 @@
 		
 		component "Cadastros DB" as CAD_DB<<Database>>
 		
-		
 		interface "JDBC" as JDBC
-		interface "LDAP" as LDAP	
+		interface "LDAP" as LDAP
 		
 		
 		frame "Cadastros APP" {
@@ -29,34 +28,14 @@
 			
 		}
 		
-		frame "Cache APP" {
-			
-			component "EhCache" as EH_CAC<<Framework>>
-			component "Jersey" as JER2<<Framework>>
-			component "Spring Framework" as SPR_FRA2<<Framework>>
-			
-			component "CacheService" as CAC_SER<<Service>>
-			
-			
-			interface "CacheManager" as CAC_MAN
-			
-			interface "IAdicionarUsuarioLogadoNoCache" as IAD_USU_LOG_NO_CAC
-			interface "IBuscarUsuarioLogadoNoCache" as IBU_USU_LOG_NO_CAC
-			
-		}
-		
+				
 		frame "API Gateway" {
 			
 			component "Apache Cammel" as APA_CAM<<Framework>>
 			
 			component "ListarAplicacoesPorPerfis" as LIS_APL_POR_PER<<Service>>
-			component "AdicionarUsuarioLogadoNoCache" as ADI_USU_LOG_NO_CAC<<Service>>
-			component "BuscarUsuarioLogadoNoCache" as BUS_USU_LOG_NO_CAC<<Service>>
-
 			
 			interface "IListarAplicacoesPorPerfis" as ILI_APL_POR_PER_GW
-			interface "IAdicionarUsuarioLogadoNoCache" as IAD_USU_LOG_NO_CAC_GW
-			interface "IBuscarUsuarioLogadoNoCache" as IBU_USU_LOG_NO_CAC_GW
 			
 		}	
 		
@@ -66,18 +45,19 @@
 			component "Spring MVC" as SPR_MVC<<Framework>>
 			component "Apache Directory LDAP API" as APA_DIR_LDA_API<<Framework>>
 			
-			
 			component "LoginController" as LOG_CON<<Controller>>
 			component "LoginBusiness" as LOG_BUS<<Business>>
 			component "HomeController" as HOM_CON<<Controller>>
 			component "HomeBusiness" as HOM_BUS<<Business>>
+			component "ValidaSessaoFilter" as VAL_SES_FIL<<Filter>>
 			
-			
-			interface "LdapConnection" as LDA_CON
-				
+			interface "LdapConnection" as LDA_CON				
+			interface "EhCache - RMI" as EH_CAC_RMI1
+			interface "EhCache - RMI" as EH_CAC_RMI2
+
 			interface "ILoginBusiness" as ILO_BUS
 			interface "IHomeBusiness" as IHO_BUS
-		
+			interface "WEB Filter" as IVA_SES_FIL
 		}
 		
 	}
@@ -85,67 +65,52 @@
 	
 	interface "HTTP(S)" as HTTP1
 	interface "HTTP(S)" as HTTP2
-		
-	
-	LOG_CON -up-|> SPR_MVC
-	LOG_BUS -up-|> SPR_MVC
-	HOM_CON -down-|> SPR_MVC
-	HOM_BUS -down-|> SPR_MVC
 	
 	
-	LOG_BUS -down-( LDA_CON
-	LDA_CON -down- APA_DIR_LDA_API
-	
-	LOG_CON -left- HTTP1:login.jsp
 	NAV -down-(  HTTP1:Internet
-	
-	HOM_CON -left- HTTP2:home.jsp
 	NAV -up-(  HTTP2:Internet
 	
-	LOG_BUS -down-( LDAP
-	LDAP -down- ACT_DIR
+	VAL_SES_FIL -right- IVA_SES_FIL
+	VAL_SES_FIL -right- EH_CAC_RMI1
 	
-	LOG_CON -right-( ILO_BUS
-	ILO_BUS -right- LOG_BUS
-	
+	HOM_CON -down-|> SPR_MVC
+	HOM_CON -left- HTTP2:home.jsp
 	HOM_CON -right-( IHO_BUS
-	IHO_BUS -right- HOM_BUS
+	HOM_CON -down-( IVA_SES_FIL
 	
+	HOM_BUS -down-|> SPR_MVC
 	HOM_BUS -right-( ILI_APL_POR_PER_GW
-	LIS_APL_POR_PER -right- ILI_APL_POR_PER_GW
+	HOM_BUS -left- IHO_BUS 
 	
-	LIS_APL_POR_PER -up-( ILI_APL_POR_PER
-	PER_SER -down- ILI_APL_POR_PER
+	LOG_CON -up-|> SPR_MVC
+	LOG_CON -left- HTTP1:login.jsp
+	LOG_CON -up-( IVA_SES_FIL
+	LOG_CON -right-( ILO_BUS
 	
-	PER_SER --( ENT_MAN
-	HIB -right- ENT_MAN
-	
-	PER_SER -down-( JDBC
-	CAD_DB -left- JDBC
+	LOG_BUS -up-|> SPR_MVC
+	LOG_BUS -down-( LDA_CON
+	LOG_BUS -down-( LDAP
+	LOG_BUS -left- ILO_BUS
+	LOG_BUS -right- EH_CAC_RMI2
 	
 	PER_SER -up-|> JER
 	PER_SER -up-|> SPR_FRA
+	PER_SER -up- ILI_APL_POR_PER
+	PER_SER -left-( ENT_MAN
+	PER_SER -down-( JDBC
 	
-	CAC_SER -right-( CAC_MAN
-	CAC_MAN -up- EH_CAC
+	LIS_APL_POR_PER -up-|> APA_CAM
+	LIS_APL_POR_PER -left- ILI_APL_POR_PER_GW
+	LIS_APL_POR_PER -down-( ILI_APL_POR_PER
 	
-	CAC_SER -up- IAD_USU_LOG_NO_CAC
-	CAC_SER -up- IBU_USU_LOG_NO_CAC
+	HIB -right- ENT_MAN
 	
-	ADI_USU_LOG_NO_CAC -left- IAD_USU_LOG_NO_CAC_GW
-	BUS_USU_LOG_NO_CAC -right- IBU_USU_LOG_NO_CAC_GW
+	CAD_DB -left- JDBC
 	
-	ADI_USU_LOG_NO_CAC -right-( IAD_USU_LOG_NO_CAC
-	BUS_USU_LOG_NO_CAC -down-( IBU_USU_LOG_NO_CAC
+	LDA_CON -down- APA_DIR_LDA_API
 	
-	LOG_BUS -right-( IAD_USU_LOG_NO_CAC_GW
-	LOG_BUS -right-( IBU_USU_LOG_NO_CAC_GW
+	LDAP -right- ACT_DIR
 	
-	LIS_APL_POR_PER -down-|> APA_CAM
-	ADI_USU_LOG_NO_CAC -left-|> APA_CAM
-	BUS_USU_LOG_NO_CAC -up-|> APA_CAM
 	
-	CAC_SER -down-|> SPR_FRA2
-	CAC_SER -down-|> JER2
 	
 @enduml
