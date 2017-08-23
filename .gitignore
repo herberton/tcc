@@ -1,2 +1,6 @@
-.idea/
-/.metadata/
+**/target/
+**/.metadata/
+**/RemoteSystemsTempFiles/
+**/.settings/
+**/.classpath
+**/.project
