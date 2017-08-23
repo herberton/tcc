@@ -2,5 +2,6 @@
 **/.metadata/
 **/RemoteSystemsTempFiles/
 **/.settings/
+**/Servers/
 **/.classpath
 **/.project
