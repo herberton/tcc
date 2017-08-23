@@ -1,0 +1,80 @@
+@startuml
+	
+	skinparam componentStyle uml2
+	
+	component "Navegador" as NAV
+	
+	interface "HTTP(S)" as HTTP
+	
+	frame "Agro" {
+	
+		component "DB" as DB
+		
+		interface "JDBC" as JDBC
+		
+		
+		frame "APP" {
+			
+			component "Hibernate" as HIB<<Framework>>
+			component "Jersey" as JER<<Framework>>
+			component "CXF" as CXF<<Framework>>
+			component "Spring Framework" as SPR_FRA<<Framework>>
+			
+			component "Service" as SER
+		
+			interface "IService" as I_SER
+			interface "EntityManager" as ENT_MAN
+			
+		}
+		
+				
+		frame "API Gateway" {
+			
+			component "Apache Cammel" as APA_CAM<<Framework>>
+			
+			component "ServiceGateway" as SER_GW
+			
+			interface "IServiceGateway" as I_SER_GW
+			
+		}	
+		
+		
+		frame "WEB" {
+		
+			component "Spring MVC" as SPR_MVC<<Framework>>
+			
+			component "Controller" as CON
+			component "Business" as BUS
+			component "ValidaSessaoFilter" as VAL_SES_FIL<<Filter>>
+			
+			interface "EhCache - RMI" as EH_CAC_RMI
+			
+			interface "IBusiness" as I_BUS
+			interface "WEB Filter" as I_WEB_FIL
+		}
+		
+	}
+
+	
+	NAV -up-( HTTP:Internet
+	HTTP -right- CON:pagina.jsp
+	CON -up-|> SPR_MVC
+	CON -right-( I_BUS
+	CON --( I_WEB_FIL
+	I_BUS -up- BUS
+	I_WEB_FIL -- VAL_SES_FIL
+	VAL_SES_FIL -right- EH_CAC_RMI
+	BUS -right-( I_SER_GW
+	I_SER_GW -- SER_GW
+	SER_GW --|> APA_CAM
+	SER_GW -right-( I_SER
+	I_SER -right- SER
+	SER -up-|> JER
+	SER -up-|> CXF
+	SER -up-|> SPR_FRA
+	SER -right-( ENT_MAN
+	ENT_MAN -up- HIB
+	SER -- JDBC
+	JDBC )-right- DB
+	
+@enduml

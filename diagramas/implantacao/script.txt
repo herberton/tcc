@@ -2,179 +2,205 @@
 
 	skinparam componentStyle uml2
 	
-	actor Clientes								as AC
-	actor :Clientes Especiais: 					as ACE
-	actor :Vendedores:							as AV
-	actor :Funcionarios:						as AF
+	actor Clientes				as CLI
+	actor :Clientes Especiais:	as CLI_ESP
+	actor "Funcionarios" 		as FUN
 	
-	[Clientes Especiais] 						as CCE
-	[Fabricantes] 								as CFA
-	[Revendedores] 								as CR
-	[Fornecedores] 								as CFO
-	[Parceiros de Entrega] 						as CPE
+	note right of FUN
+		Vendedores,
+		Administradores, 
+		Entregadores, 
+		etc.
+	end note
 	
+	artifact "Clientes Especiais"	as CLI_ESP_APP<<External APP>>
+	artifact "Fabricantes"			as FAB_APP<<External APP>>
+	artifact "Revendedores"			as REV_APP<<External APP>>
+	artifact "Fornecedores"			as FOR_APP<<External APP>>
+	artifact "Parceiros de Entrega"	as PAR_ENT_APP<<External APP>>
 	
+	frame "Agro" {
 		
-	frame "DMZ 1" {
-	
-		node "Portal WEB Server" { 
-			component CWAA [
-				Portal WEB
-				(Autenticacao e Autorizacao)
-			]
-		}
-		node "Cadastros WEB Server" { 
-			[Cadastros WEB] 				as CWC
-		}
-		node "Vendas WEB Server" { 
-			[Vendas WEB]					as CWV
-			[Propagandas e Promocoes WEB]	as CWPP
-		}
-		node "SCM WEB Server" { 
-			[Estoque WEB] 					as CWE
-			[Descarte WEB]					as CWD
-			[Logistica WEB]					as CWL
-		}
-		node "Relatorios WEB Server" { 
-			[Relatorios WEB] 				as CWR
-		}
-	}
-	
-	frame "DMZ 2" {
-	
-		node "E-commerce WEB Server" { 
-			[E-commerce WEB]				as CWEC
-		}
-		node "API Gateway EDI Server" { 
-			[API Gateway EDI]				as CAGE
-		}
-	}
-	
+		frame "DMZ 1" {
 		
-	node "API Gateway Server" { 
-		[API Gateway] 						as CAG
-	}
-	
-	node "Cadastros APP Server" { 
-		[Cadastros APP]						as CAC
-	}
-	node "Vendas APP Server" { 
-		[Vendas APP] 						as CAV
-		[Propagandas e Promocoes APP]		as CAPP
+			node "Nginx" as NGINX1<<Load Balancer>>
+			
+			node "WEB Server" as POR_WEB_SER { 
+				node "Apache Tomcat" as POR_APA_TOM_WEB {
+					artifact POR_WEB<<WEB>> [
+						Portal
+						(Autenticacao e Autorizacao)
+					]
+				}
+			}
+			node "WEB Server" as CAD_WEB_SER {
+				node "Apache Tomcat" as CAD_APA_TOM_WEB {
+					artifact "Cadastros"	as CAD_WEB<<WEB>>
+				}
+			}
+			node "WEB Server" as VEN_WEB_SER { 
+				node "Apache Tomcat" as VEN_APA_TOM_WEB {
+					artifact "Vendas"					as VEN_WEB<<WEB>>
+					artifact "Propagandas\ne Promocoes"	as PRO_PRO_WEB<<WEB>>
+				}
+			}
+			node "WEB Server" as SCM_WEB_SER { 
+				node "Apache Tomcat" as SCM_APA_TOM_WEB {
+					artifact "Estoque" 		as EST_WEB<<WEB>>
+					artifact "Descarte"		as DES_WEB<<WEB>>
+					artifact "Logistica"	as LOG_WEB<<WEB>>
+				}
+			}
+			node "WEB Server" as REL_WEB_SER { 
+				node "Apache Tomcat" as REL_APA_TOM_WEB {
+					artifact "Relatorios"	as REL_WEB<<WEB>>
+				}
+			}
+		}
 		
-	}
-	node "SCM APP Server" { 
-		[Descarte APP]						as CAD
-		[Estoque APP] 						as CAE
-		[Logistica APP] 					as CAL
-	}
-	node "Relatorios APP Server" { 
-		[Relatorios APP] 					as CAR
-	}
-	node "E-commerce APP Server" { 
-		[E-commerce APP] 					as CAEC
-	}
-	
-	database  "Active Directory Server" { 
-		[Active Directory] 					as AD
-	}
-	
-	database  "Cadastros DB Server" { 
-		[Cadastros DB] 						as CDC
-	}
-	database  "Vendas DB Server" { 
-		[Vendas DB] 						as CDV
-	}
-	database  "Propagandas e Promocoes DB Server" { 
-		[Propagandas e Promocoes DB]		as CDPP
-	}
-	database  "SCM Estoque DB Server" { 
-		[Estoque DB] 						as CDE
-	}
-	database  "SCM Descarte DB Server" { 
-		[Descarte DB] 						as CDD
-	}
-	database  "SCM Logistica DB Server" { 
-		[Logistica DB] 						as CDL
-	}
-	database  "Relatorios DB Server" { 
-		[Relatorios DB] 					as CDR
-	}
-	database  "E-commerce DB Server" { 
-		[E-commerce DB] 					as CDEC
-	}
-	
-	frame "Legado" {
-		node "Mainframe" {
-			[Faturamento]					as CMF
-			[Tributacao]					as CMT
+		frame "DMZ 2" {
+			
+			node "Nginx" as NGINX2<<Load Balancer>>
+			
+			node "WEB Server" as ECO_WEB_SER { 
+				node "Apache Tomcat" as ECO_APA_TOM_WEB {
+					artifact "E-commerce"	as ECO_WEB<<WEB>>
+				}
+			}
+			node "APP Server" as EDI_APP_SER { 
+				node "Apache Tomcat" as EDI_APA_TOM_APP {
+					artifact "API Gateway EDI"	as API_GAT_EDI<<Middleware>>
+				}
+			}
+		}
+		
+		node "Nginx" as NGINX3<<Load Balancer>>
+		node "Nginx" as NGINX4<<Load Balancer>>
+		
+		node "APP Server" as API_APP_SER { 
+				node "Apache Tomcat" as API_APA_TOM_APP {
+					artifact "API Gateway"	as API_GAT<<Middleware>>
+				}
+		}
+		
+		node "APP Server" as CAD_APP_SER { 
+				node "Apache Tomcat" as CAD_APA_TOM_APP {
+					artifact "Cadastros"	as CAD_APP<<APP>>
+				}
+		}
+		node "APP Server" as VEN_APP_SER { 
+				node "Apache Tomcat" as VEN_APA_TOM_APP {
+					artifact "Vendas"					as VEN_APP<<APP>>
+					artifact "Propagandas\ne Promocoes"	as PRO_PRO_APP<<APP>>
+				}
+		}
+		node "APP Server" as SCM_APP_SER { 
+				node "Apache Tomcat" as SCM_APA_TOM_APP {
+					artifact "Descarte"		as DES_APP<<APP>>
+					artifact "Estoque"		as EST_APP<<APP>>
+					artifact "Logistica"	as LOG_APP<<APP>>
+				}
+		}
+		node "APP Server" as REL_APP_SER { 
+				node "Apache Tomcat" as REL_APA_TOM_APP {
+					artifact "Relatorios"	as REL_APP<<APP>>
+				}
+		}
+		node "APP Server" as ECO_APP_SER { 
+				node "Apache Tomcat" as ECO_APA_TOM_APP {
+					artifact "E-commerce"	as ECO_APP<<APP>>
+			}
+		}
+		
+		database  "Active Directory"			as ACT_DIR_DB<<DB>>
+		database  "Cadastros" 					as CAD_DB<<DB>>
+		database  "Vendas"						as VEN_DB<<DB>>
+		database  "Propagandas\ne Promocoes"	as PRO_PRO_DB<<DB>>
+		database  "Estoque" 					as EST_DB<<DB>>
+		database  "Descarte" 					as DES_DB<<DB>>
+		database  "Logistica" 					as LOG_DB<<DB>>
+		database  "Relatorios"					as REL_DB<<DB>>
+		database  "E-commerce"					as ECO_DB<<DB>>
+		
+		frame "Legado" {
+			node "Mainframe" {
+				artifact "Faturamento"	as FAT_MAI_FRA<<APP>>
+				artifact "Tributacao"	as TRI_MAI_FRA<<APP>>
+			}
+		}
+		
+		node "Servidor de Arquivos" {
+			folder "Pastas" {
+				artifact "Batch"	as ARQ<<File>>
+			}
 		}
 	}
 	
-	node "Servidor de Arquivos" {
-		folder "Pastas" {
-			[Arquivos BATCH]				as ARQ
-		}
-	}
+	CLI_ESP -up-|> CLI
+	CLI_ESP -down- CLI_ESP_APP
 	
-	CWAA -down- CWC
-	CWAA -down- CWV
-	CWAA -down- CWPP
-	CWAA -down- CWE
-	CWAA -down- CWD
-	CWAA -down- CWL
-	CWAA -down- CWR
+	FUN -down- NGINX1:HTTP(S)
+	
+	NGINX1 -down- POR_WEB:HTTP(S)
+	NGINX1 -down- CAD_WEB:HTTP(S)
+	NGINX1 -down- VEN_WEB:HTTP(S)
+	NGINX1 -down- PRO_PRO_WEB:HTTP(S)
+	NGINX1 -down- EST_WEB:HTTP(S)
+	NGINX1 -down- DES_WEB:HTTP(S)
+	NGINX1 -down- LOG_WEB:HTTP(S)
+	NGINX1 -down- REL_WEB:HTTP(S)
 
-	CAGE -down- CAG
+	POR_WEB -right- NGINX3:WS
+	CAD_WEB	-down- NGINX3:WS
+	VEN_WEB -down- NGINX3:WS
+	PRO_PRO_WEB -down- NGINX3:WS
+	EST_WEB -down- NGINX3:WS
+	DES_WEB -down- NGINX3:WS
+	REL_WEB -down- NGINX3:WS
+	LOG_WEB -down- NGINX3:WS
 	
-	CWAA -down- CAG
-	CWEC -down- CAG
-	CWC	-down- CAG
-	CWV -down- CAG
-	CWPP -down- CAG
-	CWE -down- CAG
-	CWD -down- CAG
-	CWL -down- CAG
-	CWR -down- CAG
+	CLI -down- NGINX2:HTTP(S)
 	
-	CAC	-up- CAG
-	CAV -up- CAG
-	CAPP -up- CAG
-	CAE -up- CAG
-	CAD -up- CAG
-	CAL -up- CAG
-	CAR -up- CAG
-	CAEC -up- CAG
+	CLI_ESP_APP -down- NGINX2:EDI
+	FAB_APP -down- NGINX2:EDI
+	REV_APP -down- NGINX2:EDI
+	FOR_APP -down- NGINX2:EDI
+	PAR_ENT_APP -down- NGINX2:EDI
+	
+	NGINX2 -down- API_GAT_EDI:EDI
+	NGINX2 -down- ECO_WEB:HTTP(S)
+	
+	API_GAT_EDI -down- NGINX3:EDI
+	ECO_WEB -down- NGINX3:WS
+	
+	NGINX3 -down- API_GAT:WS
+	
+	API_GAT -down- NGINX4:WS
+	
+	NGINX4 -down- CAD_APP:WS
+	NGINX4 -down- VEN_APP:WS
+	NGINX4 -down- PRO_PRO_APP:WS
+	NGINX4 -down- EST_APP:WS
+	NGINX4 -down- DES_APP:WS
+	NGINX4 -down- LOG_APP:WS
+	NGINX4 -down- REL_APP:WS
+	NGINX4 -down- ECO_APP:WS
 		
-	CAC	-down- CDC
-	CAV -down- CDV
-	CAPP -down- CDPP
-	CAE -down- CDE
-	CAD -down- CDD
-	CAL -down- CDL
-	CAR -down- CDR
-	CAEC -down- CDEC
+	CAD_APP	-down- CAD_DB:JDBC
+	VEN_APP -down- VEN_DB:JDBC
+	PRO_PRO_APP -down- PRO_PRO_DB:JDBC
+	EST_APP -down- EST_DB:JDBC
+	DES_APP -down- DES_DB:JDBC
+	LOG_APP -down- LOG_DB:JDBC
+	REL_APP -down- REL_DB:JDBC
+	ECO_APP -down- ECO_DB:JDBC
 	
-	CWAA -left- AD
-	CAC -up- AD
+	POR_WEB -down- ACT_DIR_DB:LDAP
+	CAD_APP -up- ACT_DIR_DB:LDAP
 	
-	CMF -up- ARQ
-	CMT -up- ARQ
-	CAV -down- ARQ
-	CAR - ARQ
-		
-	
-	
-	CCE -down- CAGE
-	CFA -down- CAGE
-	CR -down- CAGE
-	CFO -down- CAGE
-	CPE -down- CAGE
-	
-	AC -down- CWEC
-	ACE -down- CWEC
-	ACE -down- CCE
-	AV -down- CWAA
-	AF -down- CWAA
+	FAT_MAI_FRA -up- ARQ:SMB
+	TRI_MAI_FRA -up- ARQ:SMB
+	VEN_APP -down- ARQ:SMB
+	REL_APP - ARQ:SMB
 	
 @enduml

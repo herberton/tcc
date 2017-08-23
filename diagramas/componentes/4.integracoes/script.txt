@@ -1,0 +1,47 @@
+@startuml
+	
+	skinparam componentStyle uml2
+	
+	frame "Agro" {
+		
+		frame "Modulo 1" {
+			component "Jersey" as JER<<Framework>>
+			component "Service Server" as SER
+			interface "IService" as I_SER
+		}
+		
+		frame "Modulo 2" {
+			component "CXF" as CXF<<Framework>>
+			component "Service Client" as CLI1
+		}
+
+		frame "API Gateway" {
+			component "Apache Cammel" as APA_CAM<<Framework>>
+			component "ServiceGateway" as GW
+			interface "IServiceGateway" as I_GW1
+		}
+		
+	}
+
+	frame "Sistema Externo" {
+		component "Service Client" as CLI2
+		interface "IServiceGateway" as I_GW2
+	}	
+	
+	
+		
+	GW -left-|> APA_CAM
+	SER -left-|> JER
+	CLI1 -left-|> CXF
+	
+	GW -up-( I_SER:REST
+	GW -down- I_GW1:SOAP
+	GW -right- I_GW2:EDI
+	
+	I_SER -up- SER:REST
+	
+	CLI1 -up-( I_GW1:SOAP
+	
+	CLI2 --( I_GW2:EDI
+	
+@enduml
