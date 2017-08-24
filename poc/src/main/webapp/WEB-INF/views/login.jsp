@@ -9,20 +9,16 @@
         <poc:import-css path="/resources/css/login.css"/>
 	    <title>POC</title>
 	</head>
-    <body>    
+    <body>
 		<div class="container">
-	      <form class="form-signin">
-	        <h2 class="form-signin-heading">Please sign in at ${mensagem} </h2>
-	        <label for="inputEmail" class="sr-only">Email address</label>
-	        <input type="email" id="inputEmail" class="form-control" placeholder="Email address" required autofocus>
-	        <label for="inputPassword" class="sr-only">Password</label>
-	        <input type="password" id="inputPassword" class="form-control" placeholder="Password" required>
-	        <div class="checkbox">
-	          <label>
-	            <input type="checkbox" value="remember-me"> Remember me
-	          </label>
-	        </div>
-	        <button class="btn btn-lg btn-primary btn-block" type="submit">Sign in</button>
+	      <form class="form-signin" method="post" action="${pageContext.request.contextPath}/login" >
+	        <h2 class="form-signin-heading">Faça o login na POC </h2>
+	        <label for="user" class="sr-only">Usuário</label>
+	        <input type="text" id="user" name="user" class="form-control" placeholder="Usuário" required autofocus>
+	        <label for="password" class="sr-only">Senha</label>
+	        <input type="password" id="password" name="password" class="form-control" placeholder="Senha" required>
+	        <button class="btn btn-lg btn-primary btn-block" type="submit">Entrar</button>
+	        <br/>IP: ${networkAddress}
 	      </form>
 	    </div> <!-- /container -->
 	</body>
