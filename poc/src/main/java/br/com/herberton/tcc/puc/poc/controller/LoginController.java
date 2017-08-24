@@ -13,7 +13,7 @@ import br.com.herberton.tcc.puc.poc.helper.contract.INetworkHelper;
 public class LoginController {
 
 	@Autowired
-	private INetworkHelper networkService;
+	private INetworkHelper networkHelper;
 	
 	@Autowired
 	private ILoginBusiness loginBusiness;
@@ -21,7 +21,7 @@ public class LoginController {
 	@RequestMapping("/login")
 	public String login(LoginDTO dto, Model model) {
 		
-		String networkAddress = networkService.getNetworkAddress();
+		String networkAddress = networkHelper.getNetworkAddress();
 		model.addAttribute("networkAddress", networkAddress);
 		
 		boolean isOk = loginBusiness.login(dto);

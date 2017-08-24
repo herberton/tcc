@@ -11,13 +11,13 @@ import br.com.herberton.tcc.puc.poc.helper.contract.INetworkHelper;
 public class IndexController {
 
 	@Autowired
-	private INetworkHelper networkService;
+	private INetworkHelper networkHelper;
 	
 	
 	@RequestMapping({ "/", "/index" })
 	public String index(Model model) {
 		
-		String networkAddress = networkService.getNetworkAddress();
+		String networkAddress = networkHelper.getNetworkAddress();
 		model.addAttribute("networkAddress", networkAddress);
 		
 		return "login";
