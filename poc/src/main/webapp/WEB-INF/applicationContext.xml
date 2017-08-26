@@ -29,12 +29,12 @@
 		id="sessionValidateFilter"
 		class="br.com.herberton.tcc.puc.poc.filter.SessionValidateFilter"/>
 	<!-- CACHE -->  
-<!-- 	<bean  -->
-<!-- 		id="cacheManager" -->
-<!-- 		class="org.springframework.cache.ehcache.EhCacheCacheManager"  -->
-<!-- 		p:cache-manager-ref="ehCache"/> -->
-<!-- 	<bean  -->
-<!-- 		id="ehCache" -->
-<!-- 		class="org.springframework.cache.ehcache.EhCacheManagerFactoryBean" -->
-<!-- 		p:config-location="/WEB-INF/ehcache.xml"/> -->
+	<bean 
+		id="cacheManager"
+		class="org.springframework.cache.ehcache.EhCacheCacheManager" 
+		p:cache-manager-ref="ehCache"/>
+	<bean 
+		id="ehCache"
+		class="org.springframework.cache.ehcache.EhCacheManagerFactoryBean"
+		p:config-location="/WEB-INF/ehcache.xml"/>
 </beans>

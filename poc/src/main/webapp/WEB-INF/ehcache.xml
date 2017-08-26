@@ -15,27 +15,29 @@
 	</defaultCache>
 	<cacheManagerPeerProviderFactory
 		class="net.sf.ehcache.distribution.RMICacheManagerPeerProviderFactory"
-		properties="peerDiscovery=manual, 
-					rmiUrls=//10.128.0.2:40000/MyCache"
+		properties="peerDiscovery=automatic,
+					multicastGroupAddress=230.0.0.1,    
+					multicastGroupPort=4447,
+					timeToLive=32"
 		propertySeparator="," />
 	<cacheManagerPeerListenerFactory
 		class="net.sf.ehcache.distribution.RMICacheManagerPeerListenerFactory"
-		properties="hostName=10.128.0.3, 
-					port=40000, 
-					socketTimeoutMillis=120000"
+		properties="port=4448, 
+					socketTimeoutMillis=300000"
 		propertySeparator=","/>
 	<cache 
 		name="MyCache"
 		maxElementsInMemory="1000"
-		eternal="false"
+		eternal="true"
 		overflowToDisk="true"
+		diskPersistent="false"
 		diskSpoolBufferSizeMB="20"
 		timeToLiveSeconds="3000"
 		timeToIdleSeconds="3000"
 		memoryStoreEvictionPolicy="LFU">
 		<cacheEventListenerFactory
 			class="net.sf.ehcache.distribution.RMICacheReplicatorFactory"
-			properties="replicateAsynchronously=true,
+			properties="replicateAsynchronously=false,
 						replicatePuts=true,
 						replicatePutsViaCopy=true,
 						replicateUpdates=true,

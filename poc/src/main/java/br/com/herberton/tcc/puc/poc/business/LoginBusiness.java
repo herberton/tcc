@@ -5,6 +5,8 @@ import static org.apache.commons.lang3.StringUtils.defaultString;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.Cache;
 import org.springframework.cache.CacheManager;
+import org.springframework.cache.ehcache.EhCacheCache;
+import org.springframework.cache.ehcache.EhCacheCacheManager;
 import org.springframework.stereotype.Service;
 
 import br.com.herberton.tcc.puc.poc.business.contract.ILoginBusiness;
