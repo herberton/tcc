@@ -1,0 +1,74 @@
+package br.com.herberton.tcc.puc.poc.filter;
+
+import static org.apache.commons.lang3.StringUtils.endsWithAny;
+
+import java.io.IOException;
+
+import javax.servlet.Filter;
+import javax.servlet.FilterChain;
+import javax.servlet.FilterConfig;
+import javax.servlet.ServletException;
+import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+
+import org.springframework.beans.factory.annotation.Autowired;
+
+import br.com.herberton.tcc.puc.poc.business.contract.ILoginBusiness;
+import br.com.herberton.tcc.puc.poc.dto.UserDTO;
+import br.com.herberton.tcc.puc.poc.helper.contract.IHttpServletHelper;
+
+public class SessionValidateFilter implements Filter {
+	
+	private static final String[] IGNOREDS = 
+		{
+			".ico", ".gif", ".jpg", ".jpeg", ".png", ".css", ".js", ".jsp", ".svg", ".ttf", ".eot", ".woff", 
+			"/", "/index", "/login.jsp", "/login" 
+		};
+
+	
+	@Autowired
+	private ILoginBusiness loginBusiness;
+	
+	@Autowired
+	private IHttpServletHelper httpServletHelper;
+	
+	
+	public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
+		
+		HttpServletRequest httpServletRequest = (HttpServletRequest) servletRequest;
+		HttpServletResponse httpServletResponse = (HttpServletResponse) servletResponse;
+		
+		String uri = httpServletHelper.getURI(httpServletRequest);
+		
+		if(endsWithAny(uri, IGNOREDS)) {
+			filterChain.doFilter(httpServletRequest, httpServletResponse);
+			return;
+		}
+		
+		String jSessionId = httpServletHelper.getJSessionId(httpServletRequest);
+		
+		UserDTO user = loginBusiness.getLoggedUser(jSessionId);
+		if(user != null) {
+			filterChain.doFilter(httpServletRequest, httpServletResponse);
+			return;
+		}
+		
+		HttpSession session = httpServletRequest.getSession(false);
+		
+		if(session != null) {
+			session.invalidate();
+		}
+		
+		httpServletResponse.sendRedirect("/poc/login");
+		
+	}
+	
+	
+	public void init(FilterConfig filterConfig) throws ServletException { }
+	
+	public void destroy() { }
+	
+}

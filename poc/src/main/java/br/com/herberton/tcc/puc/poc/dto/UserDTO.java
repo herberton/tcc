@@ -1,15 +1,15 @@
 package br.com.herberton.tcc.puc.poc.dto;
 
-public class LoginDTO {
+public class UserDTO {
 	
-	private String user;
+	private String login;
 	private String password;
 	
-	public String getUser() {
-		return user;
+	public String getLogin() {
+		return login;
 	}
-	public void setUser(String user) {
-		this.user = user;
+	public void setLogin(String login) {
+		this.login = login;
 	}
 	public String getPassword() {
 		return password;
@@ -17,7 +17,5 @@ public class LoginDTO {
 	public void setPassword(String password) {
 		this.password = password;
 	}
-	
-	
 	
 }

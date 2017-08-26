@@ -13,10 +13,10 @@
 		<div class="container">
 	      <form class="form-signin" method="post" action="${pageContext.request.contextPath}/login" >
 	        <h2 class="form-signin-heading">Faça o login na POC </h2>
-	        <label for="user" class="sr-only">Usuário</label>
-	        <input type="text" id="user" name="user" class="form-control" placeholder="Usuário" required autofocus>
+	        <label for="login" class="sr-only">Usuário</label>
+	        <input type="text" id="login" name="login" class="form-control" placeholder="Usuário" required autofocus autocomplete="off">
 	        <label for="password" class="sr-only">Senha</label>
-	        <input type="password" id="password" name="password" class="form-control" placeholder="Senha" required>
+	        <input type="password" id="password" name="password" class="form-control" placeholder="Senha" required autocomplete="off">
 	        <button class="btn btn-lg btn-primary btn-block" type="submit">Entrar</button>
 	        <br/>IP: ${networkAddress}
 	      </form>

@@ -11,7 +11,7 @@ import br.com.herberton.tcc.puc.poc.dto.UserDTO;
 import br.com.herberton.tcc.puc.poc.helper.contract.INetworkHelper;
 
 @Controller
-public class IndexController {
+public class HomeController {
 
 	@Autowired
 	private INetworkHelper networkHelper;
@@ -20,20 +20,21 @@ public class IndexController {
 	private ILoginBusiness loginBusiness;
 
 	
-	@RequestMapping({ "/", "/index" })
-	public String index(@CookieValue(name="JSESSIONID", required=false) String jSessionId, Model model) {
-
-		String networkAddress = networkHelper.getNetworkAddress();
-		model.addAttribute("networkAddress", networkAddress);
+	@RequestMapping("/home")
+	public String home(@CookieValue(name="JSESSIONID", required=false) String jSessionId, Model model) {
 
 		UserDTO user = loginBusiness.getLoggedUser(jSessionId);
-
+		
 		if (user == null) {
-			return "login";
+			return "redirect:index";
 		}
-
+		
+		String networkAddress = networkHelper.getNetworkAddress();
+		
 		model.addAttribute("user", user);
-		return "redirect:home";
+		model.addAttribute("networkAddress", networkAddress);
+		
+		return "home";
 
 	}
 

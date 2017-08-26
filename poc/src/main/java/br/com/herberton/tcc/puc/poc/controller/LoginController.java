@@ -2,33 +2,30 @@ package br.com.herberton.tcc.puc.poc.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import br.com.herberton.tcc.puc.poc.business.contract.ILoginBusiness;
-import br.com.herberton.tcc.puc.poc.dto.LoginDTO;
-import br.com.herberton.tcc.puc.poc.helper.contract.INetworkHelper;
+import br.com.herberton.tcc.puc.poc.dto.UserDTO;
 
 @Controller
 public class LoginController {
-
-	@Autowired
-	private INetworkHelper networkHelper;
-	
+	 
 	@Autowired
 	private ILoginBusiness loginBusiness;
 	
+	
 	@RequestMapping("/login")
-	public String login(LoginDTO dto, Model model) {
+	public String login(@CookieValue(name="JSESSIONID", required=false) String jSessionId, UserDTO user) {
 		
-		String networkAddress = networkHelper.getNetworkAddress();
-		model.addAttribute("networkAddress", networkAddress);
+		boolean isLogged = loginBusiness.login(jSessionId, user);
 		
-		boolean isOk = loginBusiness.login(dto);
+		if(!isLogged) {
+			return "redirect:index";
+		}
 		
-		return isOk ? "home" : "forward:index";
+		return "redirect:home";
 		
 	}
 	
-
 }
