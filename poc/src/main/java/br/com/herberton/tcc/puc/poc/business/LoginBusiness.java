@@ -1,87 +1,110 @@
 package br.com.herberton.tcc.puc.poc.business;
 
+import static java.util.UUID.randomUUID;
 import static org.apache.commons.lang3.StringUtils.defaultString;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.Cache;
-import org.springframework.cache.CacheManager;
-import org.springframework.cache.ehcache.EhCacheCache;
-import org.springframework.cache.ehcache.EhCacheCacheManager;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import br.com.herberton.tcc.puc.poc.business.contract.ILoginBusiness;
+import br.com.herberton.tcc.puc.poc.dao.contract.IUserDAO;
 import br.com.herberton.tcc.puc.poc.dto.UserDTO;
+import br.com.herberton.tcc.puc.poc.entity.UserEntity;
 
 @Service
+@Transactional(propagation=Propagation.REQUIRED)
 public class LoginBusiness implements ILoginBusiness {
 	
 	@Autowired
-	private CacheManager cacheManager;
+	private IUserDAO userDAO;
 	
 	
 	@Override
-	public boolean login(String jSessionId, UserDTO user) {
+	public String login(UserDTO dto) {
 		
-		if(jSessionId == null) {
-			return false;
-		}
-		
-		Cache cache = this.getCache();
-		
-		String cacheKey = this.getCacheKey(jSessionId);
-		
-		if(cache.get(cacheKey) != null) {
-			return true;
-		}
-		
-		if(defaultString(user.getLogin()).equals("admin") 
-				&& defaultString(user.getPassword()).equals("admin")) {
-			cache.put(cacheKey, user);
-			return true;
-		}
-		
-		cache.evict(cacheKey);
-		return false;
-		
-	}
-	
-	@Override
-	public UserDTO getLoggedUser(String jSessionId) {
-		
-		if(jSessionId == null) {
+		if(dto == null) {
 			return null;
 		}
 		
-		Cache cache = this.getCache();
+		if(defaultString(dto.getLogin()).equals("admin") && defaultString(dto.getPassword()).equals("admin")) {
 		
-		String cacheKey = this.getCacheKey(jSessionId);
+			List<UserEntity> foundList = this.userDAO.find("login", dto.getLogin());
+			
+			UserEntity entity = null;
+			
+			if (foundList.isEmpty()) {
+				
+				entity = new UserEntity();
+				entity.setLogin(dto.getLogin());
+				entity.setPassword(dto.getPassword());
+				
+				this.userDAO.insert(entity);
+				
+			} else {
+				
+				entity = foundList.get(0);
+				
+			}
+			
+			String ticket = randomUUID().toString();
+			
+			entity.setTicket(ticket);
+			
+			entity = this.userDAO.update(entity);
+			
+			return ticket;
+			
+		}
 		
-		return cache.get(cacheKey, UserDTO.class);
+		return null;
 		
 	}
 	
 	@Override
-	public void removeLoggedUser(String jSessionId) {
+	public void removeLoggedUser(String ticket) {
 
-		if(jSessionId == null) {
+		if(ticket == null) {
 			return;
 		}
 		
-		Cache cache = this.getCache();
+		List<UserEntity> foundList = this.userDAO.find("ticket", ticket);
 		
-		String cacheKey = this.getCacheKey(jSessionId);
+		if(!foundList.isEmpty()) {
+			
+			UserEntity entity = foundList.get(0);
+			entity.setTicket(null);
+			this.userDAO.update(entity);
+			
+		}
 		
-		cache.evict(cacheKey);
-
 	}
 	
-	
-	private Cache getCache() {
-		return cacheManager.getCache("MyCache");
-	}
-	
-	private String getCacheKey(String jSessionId) {
-		return "JSESSIONID="+jSessionId;
+	@Override
+	@Transactional(readOnly=true)
+	public UserDTO getLoggedUser(String ticket) {
+		
+		if(ticket == null) {
+			return null;
+		}
+		
+		List<UserEntity> foundList = this.userDAO.find("ticket", ticket);
+		
+		if(foundList.isEmpty()) {
+			return null;
+		}
+		
+		UserEntity entity = foundList.get(0);
+		
+		UserDTO user = new UserDTO();
+		user.setLogin(entity.getLogin());
+		user.setPassword(entity.getPassword());
+		
+		return user;
+		
 	}
 	
 }

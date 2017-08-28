@@ -8,7 +8,6 @@ import java.util.List;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSessionEvent;
 
 import org.springframework.stereotype.Component;
 
@@ -32,28 +31,17 @@ public class HttpServletHelper implements IHttpServletHelper {
 	}
 	
 	@Override
-	public String getJSessionId(HttpServletRequest httpServletRequest) {
+	public String getCookieValue(HttpServletRequest httpServletRequest, String cookieName) {
 		
 		Cookie[] cookies = defaultIfNull(httpServletRequest.getCookies(), new Cookie[]{});
 		
 		List<Cookie> result = 
 			stream(cookies)
-				.filter(cookie -> cookie.getName().toUpperCase().equals("JSESSIONID"))
+				.filter(cookie -> cookie.getName().toUpperCase().equals(cookieName))
 					.collect(toList());
 		
 		return result.size() > 0 ? result.get(0).getValue() : null;
 		
-	}
-	
-	@Override
-	public String getJSessionId(HttpSessionEvent httpSessionEvent) {
-		
-		if(httpSessionEvent == null || httpSessionEvent.getSession() == null) {
-			return null;
-		}
-		
-		return httpSessionEvent.getSession().getId();
-	
 	}
 	
 }

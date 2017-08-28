@@ -7,46 +7,24 @@
 	dynamicConfig="true">
 	<diskStore 
 		path="java.io.tmpdir"/>
-	<defaultCache
-		maxElementsInMemory="0"
-		eternal="false"
-		timeToIdleSeconds="1200"
-		timeToLiveSeconds="1200">
-	</defaultCache>
 	<cacheManagerPeerProviderFactory
 		class="net.sf.ehcache.distribution.RMICacheManagerPeerProviderFactory"
 		properties="peerDiscovery=automatic,
 					multicastGroupAddress=230.0.0.1,    
-					multicastGroupPort=4447,
-					timeToLive=32"
-		propertySeparator="," />
+					multicastGroupPort=40001"/>
 	<cacheManagerPeerListenerFactory
-		class="net.sf.ehcache.distribution.RMICacheManagerPeerListenerFactory"
-		properties="port=4448, 
-					socketTimeoutMillis=300000"
-		propertySeparator=","/>
+		class="net.sf.ehcache.distribution.RMICacheManagerPeerListenerFactory"/>
 	<cache 
 		name="MyCache"
-		maxElementsInMemory="1000"
-		eternal="true"
-		overflowToDisk="true"
-		diskPersistent="false"
-		diskSpoolBufferSizeMB="20"
-		timeToLiveSeconds="3000"
-		timeToIdleSeconds="3000"
-		memoryStoreEvictionPolicy="LFU">
+		eternal="false"
+		maxEntriesLocalHeap="100"
+		timeToIdleSeconds="100"
+		timeToLiveSeconds="100">
 		<cacheEventListenerFactory
 			class="net.sf.ehcache.distribution.RMICacheReplicatorFactory"
-			properties="replicateAsynchronously=false,
-						replicatePuts=true,
-						replicatePutsViaCopy=true,
-						replicateUpdates=true,
-						replicateUpdatesViaCopy=true,
-						replicateRemovals=true" />
+			properties="replicateAsynchronously=false" />
 		<bootstrapCacheLoaderFactory
 			class="net.sf.ehcache.distribution.RMIBootstrapCacheLoaderFactory"
-			properties="bootstrapAsynchronously=true, 
-						maximumChunkSizeBytes=5000000"
-			propertySeparator="," />
+			properties="bootstrapAsynchronously=false" />
 	</cache>
 </ehcache>

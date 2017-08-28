@@ -1,5 +1,10 @@
 package br.com.herberton.tcc.puc.poc.controller;
 
+import static br.com.herberton.tcc.puc.poc.business.contract.ILoginBusiness.TICKET_COOKIE_NAME;
+
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletResponse;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.CookieValue;
@@ -16,15 +21,25 @@ public class LoginController {
 	
 	
 	@RequestMapping("/login")
-	public String login(@CookieValue(name="JSESSIONID", required=false) String jSessionId, UserDTO user) {
+	public String login(@CookieValue(name=TICKET_COOKIE_NAME, required=false) String ticket, HttpServletResponse response, UserDTO user) {
 		
-		boolean isLogged = loginBusiness.login(jSessionId, user);
+		String toIndex = "redirect:index";
+		String toHome = "redirect:home";
 		
-		if(!isLogged) {
-			return "redirect:index";
+		if(ticket != null && loginBusiness.getLoggedUser(ticket) != null) {
+			return toHome;
 		}
 		
-		return "redirect:home";
+		ticket = loginBusiness.login(user);
+		
+		if(ticket == null) {
+			return toIndex;
+		}
+		
+		Cookie cookie = new Cookie(TICKET_COOKIE_NAME, ticket);
+		response.addCookie(cookie);
+		
+		return toHome;
 		
 	}
 	

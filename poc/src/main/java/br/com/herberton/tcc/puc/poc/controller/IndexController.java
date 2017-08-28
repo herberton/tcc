@@ -1,5 +1,7 @@
 package br.com.herberton.tcc.puc.poc.controller;
 
+import static br.com.herberton.tcc.puc.poc.business.contract.ILoginBusiness.TICKET_COOKIE_NAME;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -21,12 +23,12 @@ public class IndexController {
 
 	
 	@RequestMapping({ "/", "/index" })
-	public String index(@CookieValue(name="JSESSIONID", required=false) String jSessionId, Model model) {
+	public String index(@CookieValue(name=TICKET_COOKIE_NAME, required=false) String ticket, Model model) {
 
 		String networkAddress = networkHelper.getNetworkAddress();
 		model.addAttribute("networkAddress", networkAddress);
 
-		UserDTO user = loginBusiness.getLoggedUser(jSessionId);
+		UserDTO user = loginBusiness.getLoggedUser(ticket);
 
 		if (user == null) {
 			return "login";

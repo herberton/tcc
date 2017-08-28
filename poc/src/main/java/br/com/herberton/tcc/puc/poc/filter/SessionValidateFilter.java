@@ -1,5 +1,6 @@
 package br.com.herberton.tcc.puc.poc.filter;
 
+import static br.com.herberton.tcc.puc.poc.business.contract.ILoginBusiness.TICKET_COOKIE_NAME;
 import static org.apache.commons.lang3.StringUtils.endsWithAny;
 
 import java.io.IOException;
@@ -48,9 +49,9 @@ public class SessionValidateFilter implements Filter {
 			return;
 		}
 		
-		String jSessionId = httpServletHelper.getJSessionId(httpServletRequest);
+		String ticket = httpServletHelper.getCookieValue(httpServletRequest, TICKET_COOKIE_NAME);
 		
-		UserDTO user = loginBusiness.getLoggedUser(jSessionId);
+		UserDTO user = loginBusiness.getLoggedUser(ticket);
 		if(user != null) {
 			filterChain.doFilter(httpServletRequest, httpServletResponse);
 			return;
