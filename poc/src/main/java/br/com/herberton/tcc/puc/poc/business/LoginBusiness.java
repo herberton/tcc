@@ -32,18 +32,22 @@ public class LoginBusiness implements ILoginBusiness {
 			return null;
 		}
 		
+		final String login = defaultString(dto.getLogin()).trim();
+		final String password = defaultString(dto.getPassword()).trim();
+		
+		if(login.isEmpty()) {
+			return null;
+		}
+		
 		Map<String, Object> parameters = new HashMap<>();
-		parameters.put("login", dto.getLogin());
-		parameters.put("password", dto.getPassword());
+		parameters.put("login", login);
+		parameters.put("password", password);
 		
 		List<UserEntity> foundList = this.userDAO.find(parameters);
 		
 		UserEntity entity = null;
 		
 		if(foundList.isEmpty()) {
-			
-			final String login = defaultString(dto.getLogin());
-			final String password = defaultString(dto.getPassword());
 			
 			if(!login.equals("admin") ||  !password.equals("admin")) {
 				return null;	
@@ -63,7 +67,7 @@ public class LoginBusiness implements ILoginBusiness {
 		}
 		
 		
-		if (defaultString(entity.getTicket()).isEmpty()) {
+		if (defaultString(entity.getTicket()).trim().isEmpty()) {
 			
 			entity.setTicket(this.newTicket());
 			
