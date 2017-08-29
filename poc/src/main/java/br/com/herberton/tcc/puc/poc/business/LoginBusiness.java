@@ -3,7 +3,9 @@ package br.com.herberton.tcc.puc.poc.business;
 import static java.util.UUID.randomUUID;
 import static org.apache.commons.lang3.StringUtils.defaultString;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -30,40 +32,56 @@ public class LoginBusiness implements ILoginBusiness {
 			return null;
 		}
 		
-		if(defaultString(dto.getLogin()).equals("admin") && defaultString(dto.getPassword()).equals("admin")) {
+		Map<String, Object> parameters = new HashMap<>();
+		parameters.put("login", dto.getLogin());
+		parameters.put("password", dto.getPassword());
 		
-			List<UserEntity> foundList = this.userDAO.find("login", dto.getLogin());
+		List<UserEntity> foundList = this.userDAO.find(parameters);
+		
+		UserEntity entity = null;
+		
+		if(foundList.isEmpty()) {
 			
-			UserEntity entity = null;
+			final String login = defaultString(dto.getLogin());
+			final String password = defaultString(dto.getPassword());
 			
-			if (foundList.isEmpty()) {
-				
-				entity = new UserEntity();
-				entity.setLogin(dto.getLogin());
-				entity.setPassword(dto.getPassword());
-				
-				this.userDAO.insert(entity);
-				
-			} else {
-				
-				entity = foundList.get(0);
-				
+			if(!login.equals("admin") ||  !password.equals("admin")) {
+				return null;	
 			}
 			
-			String ticket = randomUUID().toString();
+			entity = new UserEntity();
+			entity.setLogin(login);
+			entity.setPassword(password);
+			entity.setTicket(this.newTicket());
 			
-			entity.setTicket(ticket);
+			this.userDAO.insert(entity);
 			
-			entity = this.userDAO.update(entity);
+		} else {
 			
-			return ticket;
+			entity = foundList.get(0);
 			
 		}
 		
-		return null;
+		
+		if (defaultString(entity.getTicket()).isEmpty()) {
+			
+			entity.setTicket(this.newTicket());
+			
+			entity = this.userDAO.update(entity);
+		
+		}
+		
+		return entity.getTicket();
 		
 	}
 	
+	
+	private String newTicket() {
+		String ticket = randomUUID().toString();;
+		return ticket;
+	}
+
+
 	@Override
 	public void removeLoggedUser(String ticket) {
 
