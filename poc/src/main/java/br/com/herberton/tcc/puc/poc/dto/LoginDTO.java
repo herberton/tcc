@@ -1,23 +1,16 @@
 package br.com.herberton.tcc.puc.poc.dto;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 import br.com.herberton.tcc.puc.poc.dto.contract.IDTO;
-import br.com.herberton.tcc.puc.poc.enumerator.RoleType;
 
-public class UserDTO implements IDTO<UserDTO> {
+public class LoginDTO implements IDTO<LoginDTO> {
 	
 	private static final long serialVersionUID = -8316725737245529698L;
 	
-	
 	private String login;
 	private String password;
-	private List<RoleType> roles;
-	private Boolean isAdmin;
 	
 	
 	public String getLogin() {
@@ -32,31 +25,28 @@ public class UserDTO implements IDTO<UserDTO> {
 	public void setPassword(String password) {
 		this.password = password;
 	}
-	public List<RoleType> getRoles() {
-		if(roles == null) {
-			this.setRoles(new ArrayList<>());
+	
+	
+	public LoginDTO() {
+		
+	}
+	
+	public LoginDTO(LoggedUserDTO loggedUser) {
+		if(loggedUser != null) {
+			this.setLogin(loggedUser.getLogin());
+			this.setPassword(loggedUser.getPassword());	
 		}
-		return roles;
-	}
-	public void setRoles(List<RoleType> roles) {
-		this.roles = roles;
-	}
-	public Boolean getIsAdmin() {
-		return isAdmin;
-	}
-	public void setIsAdmin(Boolean isAdmin) {
-		this.isAdmin = isAdmin;
 	}
 	
 	
 	@Override
 	public boolean equals(Object object) {
 		
-		if(!(object instanceof UserDTO)) {
+		if(!(object instanceof LoginDTO)) {
 			return false;
 		}
 		
-		UserDTO other = (UserDTO) object;
+		LoginDTO other = (LoginDTO) object;
 		
 		return 
 			new EqualsBuilder()

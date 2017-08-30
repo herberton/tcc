@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import br.com.herberton.tcc.puc.poc.business.contract.ILoginBusiness;
-import br.com.herberton.tcc.puc.poc.dto.UserDTO;
+import br.com.herberton.tcc.puc.poc.dto.LoggedUserDTO;
 import br.com.herberton.tcc.puc.poc.helper.contract.INetworkHelper;
 
 @Controller
@@ -32,46 +32,46 @@ public class IndexController {
 	@RequestMapping({ "/", "/index" })
 	public String index(@CookieValue(name=TICKET_COOKIE_NAME, required=false) String ticket, HttpServletRequest request, Model model) {
 		
-		UserDTO user = loginBusiness.getLoggedUser(ticket);
+		LoggedUserDTO loggedUser = loginBusiness.getLoggedUser(ticket);
 
-		if (user == null) {
-			return this.toIndexPage(user, model);
+		if (loggedUser == null) {
+			return this.toIndexPage(loggedUser, model);
 		}
 		
-		if(user.getRoles().contains(ADMINISTRATOR)) {
+		if(loggedUser.getRoles().contains(ADMINISTRATOR)) {
 			
 			Boolean index = valueOf(defaultString(request.getParameter("index"), "false").trim());
 			
 			if(index) {
-				return this.toIndexPage(user, model);
+				return this.toIndexPage(loggedUser, model);
 			}
 			
-			return this.toHomeController(request, user);
+			return this.toHomeController(request, loggedUser);
 			
 		}
 		
-		if(user.getRoles().contains(EMPLOYEE)) {
-			return this.toHomeController(request, user);
+		if(loggedUser.getRoles().contains(EMPLOYEE)) {
+			return this.toHomeController(request, loggedUser);
 		}
 		
-		return this.toIndexPage(user, model);
+		return this.toIndexPage(loggedUser, model);
 
 	}
 
-	private String toHomeController(HttpServletRequest request, UserDTO user) {
+	private String toHomeController(HttpServletRequest request, LoggedUserDTO loggedUser) {
 		
-		request.setAttribute("user", user);
+		request.setAttribute("loggedUser", loggedUser);
 		
 		return "forward:home";
 		
 	}
 	
-	private String toIndexPage(UserDTO user, Model model) {
+	private String toIndexPage(LoggedUserDTO loggedUser, Model model) {
 		
-		user = defaultIfNull(user, new UserDTO());
+		loggedUser = defaultIfNull(loggedUser, new LoggedUserDTO());
 		
-		if(!user.isEmpty()) {
-			model.addAttribute("user", user);
+		if(!loggedUser.isEmpty()) {
+			model.addAttribute("user", loggedUser);
 		}
 		
 		String networkAddress = networkHelper.getNetworkAddress();

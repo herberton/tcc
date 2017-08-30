@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import br.com.herberton.tcc.puc.poc.business.contract.ILoginBusiness;
-import br.com.herberton.tcc.puc.poc.dto.UserDTO;
+import br.com.herberton.tcc.puc.poc.dto.LoggedUserDTO;
 import br.com.herberton.tcc.puc.poc.helper.contract.INetworkHelper;
 
 @Controller
@@ -27,19 +27,19 @@ public class HomeController {
 	@RequestMapping("/home")
 	public String home(@CookieValue(name=TICKET_COOKIE_NAME, required=false) String ticket, HttpServletRequest request, Model model) {
 		
-		UserDTO user = (UserDTO)request.getAttribute("user");
+		LoggedUserDTO loggedUser = (LoggedUserDTO)request.getAttribute("loggedUser");
 		
-		if(user == null) {
-			user = loginBusiness.getLoggedUser(ticket);
+		if(loggedUser == null) {
+			loggedUser = loginBusiness.getLoggedUser(ticket);
 		}
 		
-		if (user == null) {
+		if (loggedUser == null) {
 			return "redirect:index"; // toIndexController
 		}
 		
 		String networkAddress = networkHelper.getNetworkAddress();
 		
-		model.addAttribute("user", user);
+		model.addAttribute("loggedUser", loggedUser);
 		model.addAttribute("networkAddress", networkAddress);
 		
 		return "home"; // toHomePage

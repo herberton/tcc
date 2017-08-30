@@ -15,7 +15,7 @@
 			<div class="starter-template">
 				<h1>POC</h1>
 				<p class="lead">
-					Hello ${user.login}<br>
+					Hello ${loggedUser.login}<br>
 					<br/>IP: ${networkAddress}
 				</p>
 			</div>

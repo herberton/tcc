@@ -15,9 +15,11 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import br.com.herberton.tcc.puc.poc.business.contract.ILoginBusiness;
+import br.com.herberton.tcc.puc.poc.converter.UserEntity2LoggedUserDTOConverter;
 import br.com.herberton.tcc.puc.poc.dao.contract.IRoleDAO;
 import br.com.herberton.tcc.puc.poc.dao.contract.IUserDAO;
-import br.com.herberton.tcc.puc.poc.dto.UserDTO;
+import br.com.herberton.tcc.puc.poc.dto.LoggedUserDTO;
+import br.com.herberton.tcc.puc.poc.dto.LoginDTO;
 import br.com.herberton.tcc.puc.poc.entity.RoleEntity;
 import br.com.herberton.tcc.puc.poc.entity.UserEntity;
 
@@ -32,10 +34,14 @@ public class LoginBusiness implements ILoginBusiness {
 	private IRoleDAO roleDAO;
 	
 	
+	@Autowired
+	private UserEntity2LoggedUserDTOConverter userEntity2LoggedUserDTOConverter;
+	
+	
 	@Override
-	public String login(UserDTO dto) {
+	public String login(LoginDTO dto) {
 		
-		dto = defaultIfNull(dto, new UserDTO());
+		dto = defaultIfNull(dto, new LoginDTO());
 		
 		if(dto.isEmpty()) {
 			return null;
@@ -106,7 +112,6 @@ public class LoginBusiness implements ILoginBusiness {
 		
 	}
 	
-	
 	private String newTicket() {
 		String ticket = randomUUID().toString().trim();
 		return ticket;
@@ -134,8 +139,9 @@ public class LoginBusiness implements ILoginBusiness {
 		
 	}
 	
+	
 	@Override
-	public UserDTO getLoggedUser(String ticket) {
+	public LoggedUserDTO getLoggedUser(String ticket) {
 		
 		ticket = defaultString(ticket).trim();
 		
@@ -178,18 +184,11 @@ public class LoginBusiness implements ILoginBusiness {
 			
 		}
 		
-		UserDTO dto = new UserDTO();
-		dto.setLogin(entity.getLogin());
-		dto.setPassword(entity.getPassword());
+		LoggedUserDTO loggeUser = this.userEntity2LoggedUserDTOConverter.convert(entity);
 		
-		for (RoleEntity role : entity.getRoles()) {
-			dto.getRoles().add(role.getType());
-		}
-		
-		dto.setIsAdmin(dto.getRoles().contains(ADMINISTRATOR));
-		
-		return dto;
+		return loggeUser;
 		
 	}
+	
 	
 }

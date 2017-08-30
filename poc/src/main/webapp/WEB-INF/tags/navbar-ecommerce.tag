@@ -27,7 +27,7 @@
 						<li class="active">
 							<a href="#">${title}</a>
 						</li>
-						<c:if test="${user != null && user.isAdmin}">
+						<c:if test="${loggedUser != null && loggedUser.isAdmin}">
 							<li><a href="${pageContext.request.contextPath}/">Back-office</a></li>
 						</c:if>
 						<li class="dropdown">
@@ -59,7 +59,7 @@
 						</li>
 					</ul>
 					<c:choose>
-						<c:when test="${user == null}">
+						<c:when test="${loggedUser == null}">
 							<form class="navbar-form navbar-right" method="post" action="${pageContext.request.contextPath}/login">
 								<div class="form-group">
 									<input type="text" placeholder="Login" name="login" class="form-control" autocomplete="off">
@@ -85,7 +85,7 @@
 								action="${pageContext.request.contextPath}/logout">
 								<div class="form-group">
 									<p class="navbar-text">
-										<strong class="text-info">${user.login}</strong><small>@</small><strong class="text-success">${networkAddress}</strong>
+										<strong class="text-info">${loggedUser.login}</strong><small>@</small><strong class="text-success">${networkAddress}</strong>
 									</p>
 								</div>
 								<button type="submit" class="btn btn-danger">Sair</button>

@@ -22,6 +22,9 @@ public class UserEntity extends DefaultEntity<Integer, UserEntity> {
 	private Integer id;
 	
 	@Column(nullable=false, unique=true)
+	private String cpf;
+	
+	@Column(nullable=false, unique=true)
 	private String login;
 	
 	@Column
@@ -29,7 +32,8 @@ public class UserEntity extends DefaultEntity<Integer, UserEntity> {
 	
 	@Column
 	private String ticket;
-
+	
+	
 	@ManyToMany(fetch=FetchType.LAZY)
 	@JoinColumn(nullable=false, insertable=false, updatable=false)
 	private List<RoleEntity> roles;
@@ -45,6 +49,14 @@ public class UserEntity extends DefaultEntity<Integer, UserEntity> {
 		this.id = id;
 	}
 
+	public String getCpf() {
+		return cpf;
+	}
+	
+	public void setCpf(String cpf) {
+		this.cpf = cpf;
+	}
+	
 	public String getLogin() {
 		return login;
 	}

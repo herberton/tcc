@@ -14,7 +14,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import br.com.herberton.tcc.puc.poc.business.contract.ILoginBusiness;
-import br.com.herberton.tcc.puc.poc.dto.UserDTO;
+import br.com.herberton.tcc.puc.poc.dto.LoggedUserDTO;
+import br.com.herberton.tcc.puc.poc.dto.LoginDTO;
 
 @Controller
 public class LoginController {
@@ -24,25 +25,25 @@ public class LoginController {
 
 	
 	@RequestMapping("/login")
-	public String login(@CookieValue(name=TICKET_COOKIE_NAME, required=false) String ticket, HttpServletResponse response, RedirectAttributes redirectAttributes, UserDTO user, Model model) {
+	public String login(@CookieValue(name=TICKET_COOKIE_NAME, required=false) String ticket, HttpServletResponse response, RedirectAttributes redirectAttributes, LoginDTO login, Model model) {
 		
-		user = defaultIfNull(user, new UserDTO());
+		login = defaultIfNull(login, new LoginDTO());
 		
 		redirectAttributes.addAttribute("index", true);
 		
 		String toIndexController = "redirect:index";
 		
-		UserDTO loggedUser = loginBusiness.getLoggedUser(ticket);
+		LoggedUserDTO loggedUser = loginBusiness.getLoggedUser(ticket);
 		
 		if(loggedUser != null) {
-			if(user.isEmpty() || loggedUser.equals(user)) {
+			if(login.isEmpty() || new LoginDTO(loggedUser).equals(login)) {
 				return toIndexController;
 			}
-		} else if(user.isEmpty()) {
+		} else if(login.isEmpty()) {
 			return toIndexController;
 		}
 		
-		ticket = loginBusiness.login(user);
+		ticket = loginBusiness.login(login);
 		
 		if(ticket != null) {
 			Cookie cookie = new Cookie(TICKET_COOKIE_NAME, ticket);

@@ -18,7 +18,7 @@ import javax.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.herberton.tcc.puc.poc.business.contract.ILoginBusiness;
-import br.com.herberton.tcc.puc.poc.dto.UserDTO;
+import br.com.herberton.tcc.puc.poc.dto.LoggedUserDTO;
 import br.com.herberton.tcc.puc.poc.helper.contract.IHttpServletHelper;
 
 public class SessionValidateFilter implements Filter {
@@ -51,7 +51,7 @@ public class SessionValidateFilter implements Filter {
 		
 		String ticket = httpServletHelper.getCookieValue(httpServletRequest, TICKET_COOKIE_NAME);
 		
-		UserDTO user = loginBusiness.getLoggedUser(ticket);
+		LoggedUserDTO user = loginBusiness.getLoggedUser(ticket);
 		if(user != null) {
 			filterChain.doFilter(httpServletRequest, httpServletResponse);
 			return;

@@ -200,15 +200,7 @@
 	
 			<!-- /END THE FEATURETTES -->
 	
-			<!-- FOOTER -->
-			<footer>
-				<p class="pull-right"><a href="#">Ir para o topo da página</a></p>
-				<p>
-					&copy; 2017 Agro, Inc. &middot; 
-					<a href="#">Privacy</a> &middot;
-					<a href="#">Terms</a>
-				</p>
-			</footer>
+			<poc:footer-ecommerce/>
 	
 		</div>
 		<!-- /.container -->

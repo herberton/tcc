@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 
 import javax.persistence.EntityManager;
+import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 
 import br.com.herberton.tcc.puc.poc.entity.contract.IDefaultEntity;
@@ -54,6 +55,40 @@ public interface IDAO<K extends Serializable, V extends IDefaultEntity<K, V>> {
 		}
 		
 		return query.getResultList();
+		
+	}
+	
+	default long count(String key, Object value) {
+		Map<String, Object> parameters = new HashMap<>();
+		parameters.put(key, value);
+		return this.count(parameters);
+	}
+	
+	default long count(Map<String, Object> parameters) {
+		
+		StringBuilder jpql = new StringBuilder();
+		jpql.append("SELECT COUNT(entity.id) ");
+		jpql.append("FROM ").append(this.getEntityClazz().getSimpleName()).append(" AS entity "); 
+		
+		if(!defaultIfNull(parameters, new HashMap<>()).isEmpty()) {
+			jpql.append("WHERE ");
+			int i = 0;
+			for (String key : parameters.keySet()) {
+				if(i > 0) {
+					jpql.append(" AND ");		
+				}
+				jpql.append("entity.").append(key).append(" = :").append(key);
+				i++;
+			}
+		}
+		
+		Query query = this.getEntityManager().createQuery(jpql.toString());
+		
+		if(!defaultIfNull(parameters, new HashMap<>()).isEmpty()) {
+			parameters.keySet().forEach(key -> query.setParameter(key, parameters.get(key)));
+		}
+		
+		return (Long)query.getSingleResult();
 		
 	}
 	
