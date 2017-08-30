@@ -1,6 +1,13 @@
 package br.com.herberton.tcc.puc.poc.controller;
 
 import static br.com.herberton.tcc.puc.poc.business.contract.ILoginBusiness.TICKET_COOKIE_NAME;
+import static br.com.herberton.tcc.puc.poc.enumerator.RoleType.ADMINISTRATOR;
+import static br.com.herberton.tcc.puc.poc.enumerator.RoleType.EMPLOYEE;
+import static java.lang.Boolean.valueOf;
+import static org.apache.commons.lang3.ObjectUtils.defaultIfNull;
+import static org.apache.commons.lang3.StringUtils.defaultString;
+
+import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -23,20 +30,55 @@ public class IndexController {
 
 	
 	@RequestMapping({ "/", "/index" })
-	public String index(@CookieValue(name=TICKET_COOKIE_NAME, required=false) String ticket, Model model) {
-
-		String networkAddress = networkHelper.getNetworkAddress();
-		model.addAttribute("networkAddress", networkAddress);
-
+	public String index(@CookieValue(name=TICKET_COOKIE_NAME, required=false) String ticket, HttpServletRequest request, Model model) {
+		
 		UserDTO user = loginBusiness.getLoggedUser(ticket);
 
 		if (user == null) {
-			return "login";
+			return this.toIndexPage(user, model);
 		}
+		
+		if(user.getRoles().contains(ADMINISTRATOR)) {
+			
+			Boolean index = valueOf(defaultString(request.getParameter("index"), "false").trim());
+			
+			if(index) {
+				return this.toIndexPage(user, model);
+			}
+			
+			return this.toHomeController(request, user);
+			
+		}
+		
+		if(user.getRoles().contains(EMPLOYEE)) {
+			return this.toHomeController(request, user);
+		}
+		
+		return this.toIndexPage(user, model);
 
-		model.addAttribute("user", user);
-		return "redirect:home";
+	}
 
+	private String toHomeController(HttpServletRequest request, UserDTO user) {
+		
+		request.setAttribute("user", user);
+		
+		return "forward:home";
+		
+	}
+	
+	private String toIndexPage(UserDTO user, Model model) {
+		
+		user = defaultIfNull(user, new UserDTO());
+		
+		if(!user.isEmpty()) {
+			model.addAttribute("user", user);
+		}
+		
+		String networkAddress = networkHelper.getNetworkAddress();
+		model.addAttribute("networkAddress", networkAddress);
+		
+		return "index";
+	
 	}
 
 }

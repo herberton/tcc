@@ -20,3 +20,5 @@
 <poc:import-js path="/resources/api/bootstrap/3.3.7/assets/js/ie10-viewport-bug-workaround.js"/>
 
 <poc:import-js path="/resources/api/bootstrap/3.3.7/dist/js/bootstrap.min.js"/>
+
+<link href="${pageContext.request.contextPath}/resources/img/favicon.ico" rel="icon">

@@ -1,13 +1,19 @@
 package br.com.herberton.tcc.puc.poc.entity;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToMany;
 
 @Entity
-public class UserEntity implements DefaultEntity<Integer> {
+public class UserEntity extends DefaultEntity<Integer, UserEntity> {
 	
 	private static final long serialVersionUID = 6729939422058790598L;
 
@@ -24,6 +30,11 @@ public class UserEntity implements DefaultEntity<Integer> {
 	@Column
 	private String ticket;
 
+	@ManyToMany(fetch=FetchType.LAZY)
+	@JoinColumn(nullable=false, insertable=false, updatable=false)
+	private List<RoleEntity> roles;
+	
+	
 	@Override
 	public Integer getId() {
 		return id;
@@ -56,6 +67,17 @@ public class UserEntity implements DefaultEntity<Integer> {
 	
 	public void setTicket(String ticket) {
 		this.ticket = ticket;
+	}
+	
+	public List<RoleEntity> getRoles() {
+		if(roles == null) {
+			this.setRoles(new ArrayList<>());
+		}
+		return roles;
+	}
+	
+	public void setRoles(List<RoleEntity> roles) {
+		this.roles = roles;
 	}
 	
 }

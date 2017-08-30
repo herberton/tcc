@@ -10,9 +10,9 @@ import java.util.Map;
 import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
 
-import br.com.herberton.tcc.puc.poc.entity.DefaultEntity;
+import br.com.herberton.tcc.puc.poc.entity.contract.IDefaultEntity;
 
-public interface IDAO<K extends Serializable,V extends DefaultEntity<K>> {
+public interface IDAO<K extends Serializable, V extends IDefaultEntity<K, V>> {
 	
 	Class<V> getEntityClazz();
 	
