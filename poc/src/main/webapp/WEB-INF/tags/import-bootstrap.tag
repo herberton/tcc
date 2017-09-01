@@ -1,6 +1,8 @@
 <%@ tag language="java" pageEncoding="ISO-8859-1" %>
 <%@ taglib prefix="poc" tagdir="/WEB-INF/tags" %>
 
+<%@ attribute name="system" required="true" description="ecommerce|backoffice" %>
+
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -13,6 +15,8 @@
 	<script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
 	<script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
 <![endif]-->
+
+<poc:import-css path="/resources/css/global/${system}.css"/>
 
 <poc:import-js path="/resources/api/jquery/1.12.4/jquery.min.js"/>
 

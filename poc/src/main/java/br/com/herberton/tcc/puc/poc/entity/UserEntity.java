@@ -1,5 +1,8 @@
 package br.com.herberton.tcc.puc.poc.entity;
 
+import static br.com.herberton.tcc.puc.poc.enumerator.RoleType.ADMINISTRATOR;
+import static br.com.herberton.tcc.puc.poc.enumerator.RoleType.SPECIAL_CUSTOMER;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -91,5 +94,22 @@ public class UserEntity extends DefaultEntity<Integer, UserEntity> {
 	public void setRoles(List<RoleEntity> roles) {
 		this.roles = roles;
 	}
+	
+	
+	public boolean isSpecialCustomer() {
+		return 
+			this.getRoles()
+				.stream()
+				.map(RoleEntity::getType)
+				.filter(type -> type.equals(SPECIAL_CUSTOMER)).count() > 0;
+	}
+	
+	public boolean isAdministrator() {
+		return 
+			this.getRoles()
+				.stream()
+				.map(RoleEntity::getType)
+				.filter(type -> type.equals(ADMINISTRATOR)).count() > 0;
+}
 	
 }

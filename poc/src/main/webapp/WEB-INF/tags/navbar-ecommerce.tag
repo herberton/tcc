@@ -2,6 +2,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib prefix="poc" tagdir="/WEB-INF/tags"%>
 <%@ attribute name="title" required="true" %>
+<%@ attribute name="hideLoginForm" required="false" %>
 <!-- NAVBAR -->
 <div class="navbar-wrapper">
 	<div class="container">
@@ -60,29 +61,30 @@
 					</ul>
 					<c:choose>
 						<c:when test="${loggedUser == null}">
-							<form class="navbar-form navbar-right" method="post" action="${pageContext.request.contextPath}/login">
-								<div class="form-group">
-									<input type="text" placeholder="Login" name="login" class="form-control" autocomplete="off">
-								</div>
-								<div class="form-group">
-									<input type="password" placeholder="Senha" name="password" class="form-control" autocomplete="off">
-								</div>
-								<div class="btn-group">
-								  <button type="submit" class="btn btn-success">Entrar</button>
-								  <button type="button" class="btn btn-success dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-								    <span class="caret"></span>
-								    <span class="sr-only">Toggle Dropdown</span>
-								  </button>
-								  <ul class="dropdown-menu">
-								    <li class="dropdown-header">Não possui um login?</li>
-								  	<li><a href="#">Cadastre-se</a></li>
-								  </ul>
-								</div>
-							</form>
+							<c:if test="${hideLoginForm != 'true'}">
+								<form class="navbar-form navbar-right" method="post" action="${pageContext.request.contextPath}/login">
+									<div class="form-group">
+										<input type="text" placeholder="Login" name="login" class="form-control" autocomplete="off" required>
+									</div>
+									<div class="form-group">
+										<input type="password" placeholder="Senha" name="password" class="form-control" autocomplete="off">
+									</div>
+									<div class="btn-group">
+									  <button type="submit" class="btn btn-success">Entrar</button>
+									  <button type="button" class="btn btn-success dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+									    <span class="caret"></span>
+									    <span class="sr-only">Toggle Dropdown</span>
+									  </button>
+									  <ul class="dropdown-menu">
+									    <li class="dropdown-header">Não possui um login?</li>
+									  	<li><a href="${pageContext.request.contextPath}/registration/ecommerce-user">Cadastre-se</a></li>
+									  </ul>
+									</div>
+								</form>
+							</c:if>
 						</c:when>
 						<c:otherwise>
-							<form class="navbar-form navbar-right logout-form" method="post"
-								action="${pageContext.request.contextPath}/logout">
+							<form class="navbar-form navbar-right logout-form" method="post" action="${pageContext.request.contextPath}/logout">
 								<div class="form-group">
 									<p class="navbar-text">
 										<strong class="text-info">${loggedUser.login}</strong><small>@</small><strong class="text-success">${networkAddress}</strong>
@@ -95,6 +97,7 @@
 				</div>
 			</div>
 		</nav>
+		<jsp:doBody/>
 	</div>
 </div>
 <!-- / NAVBAR -->

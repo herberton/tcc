@@ -1,6 +1,7 @@
 package br.com.herberton.tcc.puc.poc.controller;
 
-import static br.com.herberton.tcc.puc.poc.business.contract.ILoginBusiness.TICKET_COOKIE_NAME;
+import static br.com.herberton.tcc.puc.poc.dto.TicketDTO.from;
+import static br.com.herberton.tcc.puc.poc.helper.contract.ICookieHelper.TICKET_COOKIE_NAME;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -10,7 +11,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import br.com.herberton.tcc.puc.poc.business.contract.ILoginBusiness;
+import br.com.herberton.tcc.puc.poc.business.contract.IAuthenticationBusiness;
 import br.com.herberton.tcc.puc.poc.dto.LoggedUserDTO;
 import br.com.herberton.tcc.puc.poc.helper.contract.INetworkHelper;
 
@@ -21,7 +22,7 @@ public class HomeController {
 	private INetworkHelper networkHelper;
 
 	@Autowired
-	private ILoginBusiness loginBusiness;
+	private IAuthenticationBusiness authenticationBusiness;
 
 	
 	@RequestMapping("/home")
@@ -30,7 +31,7 @@ public class HomeController {
 		LoggedUserDTO loggedUser = (LoggedUserDTO)request.getAttribute("loggedUser");
 		
 		if(loggedUser == null) {
-			loggedUser = loginBusiness.getLoggedUser(ticket);
+			loggedUser = authenticationBusiness.getLoggedUser(from(ticket));
 		}
 		
 		if (loggedUser == null) {

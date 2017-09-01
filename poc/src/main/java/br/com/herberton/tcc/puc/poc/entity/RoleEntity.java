@@ -18,7 +18,7 @@ import br.com.herberton.tcc.puc.poc.enumerator.RoleType;
 public class RoleEntity extends DefaultEntity<Integer, RoleEntity> {
 	
 	private static final long serialVersionUID = 6729939422058790598L;
-
+	
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	@Column(nullable=false, unique=true)

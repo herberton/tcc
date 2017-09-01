@@ -5,13 +5,14 @@
 <html>
 	<head>
 		<meta name="author" content="Herberon Candido Souza">
-		<poc:import-bootstrap/>
+		<poc:import-bootstrap system="backoffice"/>
 		<poc:import-css path="/resources/css/home.css"/>
 		<title>POC - Back-office</title>
 	</head>
 	<body>
 		<poc:navbar-backoffice title="Home"/>
 		<div class="container">
+			<poc:message/>
 			<div class="starter-template">
 				<h1>POC</h1>
 				<p class="lead">

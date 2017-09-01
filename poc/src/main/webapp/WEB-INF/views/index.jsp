@@ -5,12 +5,14 @@
 <html>
 <head>
 	<meta name="author" content="Herberon Candido Souza">
-	<poc:import-bootstrap/>
+	<poc:import-bootstrap system="ecommerce"/>
 	<poc:import-css path="/resources/css/index.css" />
 	<title>Agro</title>
 </head>
 	<body>
-		<poc:navbar-ecommerce title="Home"/>
+		<poc:navbar-ecommerce title="Home">
+			<poc:message/>
+		</poc:navbar-ecommerce>
 		<!-- ===================================================== -->
 		<!-- CAROUSEL -->
 		<div id="myCarousel" class="carousel slide" data-ride="carousel">
@@ -29,8 +31,17 @@
 					<div class="container">
 						<div class="carousel-caption">
 							<h1>Promoções Especiais</h1>
-							<p>Faça o cadastro e aproveite as promoções especiais exclusivas para clientes.</p>
-							<p><a class="btn btn-lg btn-primary" href="#" role="button">Cadaste-se!</a></p>
+							<p>
+								<c:choose>
+									<c:when test="${loggedUser == null}">
+										Faça o cadastro e aproveite as promoções especiais exclusivas para clientes.
+									</c:when>
+									<c:otherwise>
+										Olá ${loggedUser.login}, aproveite as promoções especiais exclusivas para você!
+									</c:otherwise>
+								</c:choose>							
+							</p>
+							<p><a class="btn btn-lg btn-primary" href="${pageContext.request.contextPath}/registration/ecommerce-user" role="button">${loggedUser == null ? 'Cadastre-se!' : 'Atualizar Cadastro'}</a></p>
 						</div>
 					</div>
 				</div>

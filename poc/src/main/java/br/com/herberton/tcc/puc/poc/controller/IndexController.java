@@ -1,8 +1,9 @@
 package br.com.herberton.tcc.puc.poc.controller;
 
-import static br.com.herberton.tcc.puc.poc.business.contract.ILoginBusiness.TICKET_COOKIE_NAME;
+import static br.com.herberton.tcc.puc.poc.dto.TicketDTO.from;
 import static br.com.herberton.tcc.puc.poc.enumerator.RoleType.ADMINISTRATOR;
 import static br.com.herberton.tcc.puc.poc.enumerator.RoleType.EMPLOYEE;
+import static br.com.herberton.tcc.puc.poc.helper.contract.ICookieHelper.TICKET_COOKIE_NAME;
 import static java.lang.Boolean.valueOf;
 import static org.apache.commons.lang3.ObjectUtils.defaultIfNull;
 import static org.apache.commons.lang3.StringUtils.defaultString;
@@ -15,7 +16,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import br.com.herberton.tcc.puc.poc.business.contract.ILoginBusiness;
+import br.com.herberton.tcc.puc.poc.business.contract.IAuthenticationBusiness;
 import br.com.herberton.tcc.puc.poc.dto.LoggedUserDTO;
 import br.com.herberton.tcc.puc.poc.helper.contract.INetworkHelper;
 
@@ -26,13 +27,13 @@ public class IndexController {
 	private INetworkHelper networkHelper;
 
 	@Autowired
-	private ILoginBusiness loginBusiness;
+	private IAuthenticationBusiness authenticationBusiness;
 
 	
 	@RequestMapping({ "/", "/index" })
 	public String index(@CookieValue(name=TICKET_COOKIE_NAME, required=false) String ticket, HttpServletRequest request, Model model) {
 		
-		LoggedUserDTO loggedUser = loginBusiness.getLoggedUser(ticket);
+		LoggedUserDTO loggedUser = authenticationBusiness.getLoggedUser(from(ticket));
 
 		if (loggedUser == null) {
 			return this.toIndexPage(loggedUser, model);
@@ -71,7 +72,7 @@ public class IndexController {
 		loggedUser = defaultIfNull(loggedUser, new LoggedUserDTO());
 		
 		if(!loggedUser.isEmpty()) {
-			model.addAttribute("user", loggedUser);
+			model.addAttribute("loggedUser", loggedUser);
 		}
 		
 		String networkAddress = networkHelper.getNetworkAddress();

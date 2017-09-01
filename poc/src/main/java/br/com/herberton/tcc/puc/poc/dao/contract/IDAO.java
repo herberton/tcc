@@ -92,6 +92,14 @@ public interface IDAO<K extends Serializable, V extends IDefaultEntity<K, V>> {
 		
 	}
 	
+	default boolean contains(String key, Object value) {
+		return this.count(key, value) > 0;
+	}
+	
+	default boolean contains(Map<String, Object> parameters) {
+		return this.count(parameters) > 0;
+	}
+	
 	default void insert(V entity) {
 		this.getEntityManager().persist(entity);
 	}

@@ -14,9 +14,7 @@
 					    http://www.springframework.org/schema/context/spring-context-3.0.xsd
 					    http://www.springframework.org/schema/mvc 
 					    http://www.springframework.org/schema/mvc/spring-mvc-3.0.xsd
-					    http://www.springframework.org/schema/cache 
-					    http://www.springframework.org/schema/cache/spring-cache.xsd
-						http://www.springframework.org/schema/tx
+					    http://www.springframework.org/schema/tx
 						http://www.springframework.org/schema/tx/spring-tx.xsd
 						http://www.springframework.org/schema/aop
 						http://www.springframework.org/schema/aop/spring-aop.xsd">
@@ -50,7 +48,9 @@
    		p:driverClassName="${jdbc.driverClassName}"
    		p:url="${jdbc.url}"
    		p:username="${jdbc.username}"
-   		p:password="${jdbc.password}"/>
+   		p:password="${jdbc.password}"
+   		p:validationQuery="SELECT 1"
+   		p:testOnBorrow="true"/>
    	<bean 
 		id="entityManagerFactory" 
 		class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean"
@@ -62,13 +62,4 @@
 		p:dataSource-ref="dataSource"/>
 	<bean 
 		class="org.springframework.dao.annotation.PersistenceExceptionTranslationPostProcessor"/>
-	<!-- CACHE -->  
-	<bean 
-		id="cacheManager"
-		class="org.springframework.cache.ehcache.EhCacheCacheManager" 
-		p:cache-manager-ref="ehCache"/>
-	<bean 
-		id="ehCache"
-		class="org.springframework.cache.ehcache.EhCacheManagerFactoryBean"
-		p:config-location="/WEB-INF/ehcache.xml"/>
 </beans>

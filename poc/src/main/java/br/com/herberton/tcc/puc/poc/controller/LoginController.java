@@ -1,6 +1,9 @@
 package br.com.herberton.tcc.puc.poc.controller;
 
-import static br.com.herberton.tcc.puc.poc.business.contract.ILoginBusiness.TICKET_COOKIE_NAME;
+import static br.com.herberton.tcc.puc.poc.dto.MessageDTO.ofError;
+import static br.com.herberton.tcc.puc.poc.dto.MessageDTO.ofSuccess;
+import static br.com.herberton.tcc.puc.poc.dto.TicketDTO.from;
+import static br.com.herberton.tcc.puc.poc.helper.contract.ICookieHelper.TICKET_COOKIE_NAME;
 import static org.apache.commons.lang3.ObjectUtils.defaultIfNull;
 
 import javax.servlet.http.Cookie;
@@ -13,15 +16,20 @@ import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import br.com.herberton.tcc.puc.poc.business.contract.ILoginBusiness;
+import br.com.herberton.tcc.puc.poc.business.contract.IAuthenticationBusiness;
 import br.com.herberton.tcc.puc.poc.dto.LoggedUserDTO;
 import br.com.herberton.tcc.puc.poc.dto.LoginDTO;
+import br.com.herberton.tcc.puc.poc.dto.TicketDTO;
+import br.com.herberton.tcc.puc.poc.helper.contract.ICookieHelper;
 
 @Controller
 public class LoginController {
 
 	@Autowired
-	private ILoginBusiness loginBusiness;
+	private IAuthenticationBusiness authenticationBusiness;
+	
+	@Autowired
+	private ICookieHelper cookieHelper;
 
 	
 	@RequestMapping("/login")
@@ -33,7 +41,7 @@ public class LoginController {
 		
 		String toIndexController = "redirect:index";
 		
-		LoggedUserDTO loggedUser = loginBusiness.getLoggedUser(ticket);
+		LoggedUserDTO loggedUser = authenticationBusiness.getLoggedUser(from(ticket));
 		
 		if(loggedUser != null) {
 			if(login.isEmpty() || new LoginDTO(loggedUser).equals(login)) {
@@ -43,11 +51,20 @@ public class LoginController {
 			return toIndexController;
 		}
 		
-		ticket = loginBusiness.login(login);
-		
-		if(ticket != null) {
-			Cookie cookie = new Cookie(TICKET_COOKIE_NAME, ticket);
+		try {
+			
+			TicketDTO ticketDTO = authenticationBusiness.login(login);
+			
+			Cookie cookie = this.cookieHelper.newTicketCookie(ticketDTO);
+			
 			response.addCookie(cookie);
+			
+			model.addAttribute("message", ofSuccess("Autenticação efetuada com sucesso!"));
+			
+		} catch (Exception e) {
+
+			model.addAttribute("message", ofError(e));
+			
 		}
 		
 		return toIndexController;
@@ -58,9 +75,10 @@ public class LoginController {
 	@RequestMapping("/logout")
 	public String logout(@CookieValue(name=TICKET_COOKIE_NAME, required=false) String ticket, HttpServletResponse response) {
 		
-		loginBusiness.logout(ticket);
+		authenticationBusiness.logout(from(ticket));
 		
 		Cookie cookie = new Cookie(TICKET_COOKIE_NAME, null);
+		cookie.setPath("/poc");
 		response.addCookie(cookie);
 		
 		return "redirect:index"; // toIndexController
