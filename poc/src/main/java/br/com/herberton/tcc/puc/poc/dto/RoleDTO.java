@@ -21,7 +21,7 @@ public class RoleDTO
 	private String name;
 	private RoleType type;
 	private List<UserDTO> users;
-	
+	private boolean canEdit;
 	
 	public Integer getId() {
 		return id;
@@ -49,6 +49,12 @@ public class RoleDTO
 	}
 	public void setUsers(List<UserDTO> users) {
 		this.users = users;
+	}
+	public boolean isCanEdit() {
+		return canEdit;
+	}
+	public void setCanEdit(boolean canEdit) {
+		this.canEdit = canEdit;
 	}
 	
 	

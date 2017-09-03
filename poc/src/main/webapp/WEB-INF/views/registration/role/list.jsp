@@ -38,7 +38,7 @@
 								<td>${role.name}</td>
 								<td>${role.type}</td>
 								<td>
-									<c:if test="${role.name != 'admin'}">
+									<c:if test="${role.canEdit}">
 										<a href="${pageContext.request.contextPath}/registration/role/form?id=${role.id}" class="btn btn-success">Alterar</a>
 										<a href="${pageContext.request.contextPath}/registration/role/delete?id=${role.id}" class="btn btn-danger">Excluir</a>
 									</c:if>
