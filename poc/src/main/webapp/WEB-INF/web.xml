@@ -9,7 +9,11 @@
 	</welcome-file-list>
 	<error-page>
 		<error-code>401</error-code>
-		<location>/WEB-INF/view/login.jsp</location>
+		<location>/index</location>
+	</error-page>
+	<error-page>
+		<error-code>404</error-code>
+		<location>/index</location>
 	</error-page>
 	<session-config>
 		<session-timeout>5</session-timeout>

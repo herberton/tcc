@@ -5,7 +5,8 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 import br.com.herberton.tcc.puc.poc.dto.contract.IDTO;
 
-public class MessageDTO implements IDTO<MessageDTO> {
+public class MessageDTO 
+	implements IDTO<MessageDTO> {
 	
 	private static final long serialVersionUID = -8316725737245529698L;
 	

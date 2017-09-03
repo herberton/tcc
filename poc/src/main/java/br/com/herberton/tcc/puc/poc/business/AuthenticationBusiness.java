@@ -17,9 +17,9 @@ import br.com.herberton.tcc.puc.poc.business.contract.IAuthenticationBusiness;
 import br.com.herberton.tcc.puc.poc.business.contract.IUserBusiness;
 import br.com.herberton.tcc.puc.poc.converter.UserEntity2LoggedUserDTOConverter;
 import br.com.herberton.tcc.puc.poc.dao.contract.IUserDAO;
-import br.com.herberton.tcc.puc.poc.dto.LoggedUserDTO;
 import br.com.herberton.tcc.puc.poc.dto.LoginDTO;
 import br.com.herberton.tcc.puc.poc.dto.TicketDTO;
+import br.com.herberton.tcc.puc.poc.dto.user.LoggedUserDTO;
 import br.com.herberton.tcc.puc.poc.entity.UserEntity;
 
 @Service
@@ -57,7 +57,7 @@ public class AuthenticationBusiness implements IAuthenticationBusiness {
 		UserEntity entity = null;
 		
 		
-		if(login.equals("admin") ||  password.equals("admin")) {
+		if(login.equals("admin") && password.equals("admin")) {
 			
 			entity = this.userBusiness.getAdministratorUser();
 		
@@ -77,6 +77,9 @@ public class AuthenticationBusiness implements IAuthenticationBusiness {
 			
 		}
 		
+		if (entity.getRoles().isEmpty()) {
+			throw new IllegalArgumentException("Usuário não possui permissões, entre em contato com o administrador do sistema!");
+		}
 		
 		if (defaultString(entity.getTicket()).trim().isEmpty()) {
 			

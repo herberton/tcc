@@ -58,6 +58,10 @@ public interface IDAO<K extends Serializable, V extends IDefaultEntity<K, V>> {
 		
 	}
 	
+	default List<V> list() {
+		return this.find(new HashMap<>());
+	}
+	
 	default long count(String key, Object value) {
 		Map<String, Object> parameters = new HashMap<>();
 		parameters.put(key, value);
@@ -98,6 +102,10 @@ public interface IDAO<K extends Serializable, V extends IDefaultEntity<K, V>> {
 	
 	default boolean contains(Map<String, Object> parameters) {
 		return this.count(parameters) > 0;
+	}
+	
+	default boolean contains(K id) {
+		return this.count("id", id) > 0;
 	}
 	
 	default void insert(V entity) {

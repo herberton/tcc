@@ -1,6 +1,6 @@
 package br.com.herberton.tcc.puc.poc.controller;
 
-import static br.com.herberton.tcc.puc.poc.dto.TicketDTO.from;
+import static br.com.herberton.tcc.puc.poc.dto.TicketDTO.withTicket;
 import static br.com.herberton.tcc.puc.poc.enumerator.RoleType.ADMINISTRATOR;
 import static br.com.herberton.tcc.puc.poc.enumerator.RoleType.EMPLOYEE;
 import static br.com.herberton.tcc.puc.poc.helper.contract.ICookieHelper.TICKET_COOKIE_NAME;
@@ -17,7 +17,8 @@ import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import br.com.herberton.tcc.puc.poc.business.contract.IAuthenticationBusiness;
-import br.com.herberton.tcc.puc.poc.dto.LoggedUserDTO;
+import br.com.herberton.tcc.puc.poc.dto.MessageDTO;
+import br.com.herberton.tcc.puc.poc.dto.user.LoggedUserDTO;
 import br.com.herberton.tcc.puc.poc.helper.contract.INetworkHelper;
 
 @Controller
@@ -33,10 +34,10 @@ public class IndexController {
 	@RequestMapping({ "/", "/index" })
 	public String index(@CookieValue(name=TICKET_COOKIE_NAME, required=false) String ticket, HttpServletRequest request, Model model) {
 		
-		LoggedUserDTO loggedUser = authenticationBusiness.getLoggedUser(from(ticket));
+		LoggedUserDTO loggedUser = authenticationBusiness.getLoggedUser(withTicket(ticket));
 
 		if (loggedUser == null) {
-			return this.toIndexPage(loggedUser, model);
+			return this.toIndexPage(loggedUser, request, model);
 		}
 		
 		if(loggedUser.getRoles().contains(ADMINISTRATOR)) {
@@ -44,7 +45,7 @@ public class IndexController {
 			Boolean index = valueOf(defaultString(request.getParameter("index"), "false").trim());
 			
 			if(index) {
-				return this.toIndexPage(loggedUser, model);
+				return this.toIndexPage(loggedUser, request, model);
 			}
 			
 			return this.toHomeController(request, loggedUser);
@@ -55,7 +56,7 @@ public class IndexController {
 			return this.toHomeController(request, loggedUser);
 		}
 		
-		return this.toIndexPage(loggedUser, model);
+		return this.toIndexPage(loggedUser, request, model);
 
 	}
 
@@ -67,13 +68,17 @@ public class IndexController {
 		
 	}
 	
-	private String toIndexPage(LoggedUserDTO loggedUser, Model model) {
+	private String toIndexPage(LoggedUserDTO loggedUser, HttpServletRequest request, Model model) {
 		
 		loggedUser = defaultIfNull(loggedUser, new LoggedUserDTO());
 		
 		if(!loggedUser.isEmpty()) {
 			model.addAttribute("loggedUser", loggedUser);
 		}
+		
+		
+		MessageDTO message = (MessageDTO)request.getAttribute("message");
+		model.addAttribute("message", message);
 		
 		String networkAddress = networkHelper.getNetworkAddress();
 		model.addAttribute("networkAddress", networkAddress);

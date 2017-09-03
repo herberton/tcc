@@ -33,7 +33,7 @@
 							<h1>Promoções Especiais</h1>
 							<p>
 								<c:choose>
-									<c:when test="${loggedUser == null}">
+									<c:when test="${loggedUser == null || loggedUser.isAdmin}">
 										Faça o cadastro e aproveite as promoções especiais exclusivas para clientes.
 									</c:when>
 									<c:otherwise>
@@ -41,7 +41,7 @@
 									</c:otherwise>
 								</c:choose>							
 							</p>
-							<p><a class="btn btn-lg btn-primary" href="${pageContext.request.contextPath}/registration/ecommerce-user" role="button">${loggedUser == null ? 'Cadastre-se!' : 'Atualizar Cadastro'}</a></p>
+							<p><a class="btn btn-lg btn-primary" href="${pageContext.request.contextPath}/registration/ecommerce-user/" role="button">${loggedUser == null || loggedUser.isAdmin ? 'Cadastre-se!' : 'Atualizar Cadastro'}</a></p>
 						</div>
 					</div>
 				</div>

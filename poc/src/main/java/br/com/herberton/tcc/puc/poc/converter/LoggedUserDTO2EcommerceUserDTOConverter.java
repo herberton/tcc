@@ -3,8 +3,8 @@ package br.com.herberton.tcc.puc.poc.converter;
 import org.springframework.stereotype.Component;
 
 import br.com.herberton.tcc.puc.poc.converter.contract.IConverter;
-import br.com.herberton.tcc.puc.poc.dto.EcommerceUserDTO;
-import br.com.herberton.tcc.puc.poc.dto.LoggedUserDTO;
+import br.com.herberton.tcc.puc.poc.dto.user.EcommerceUserDTO;
+import br.com.herberton.tcc.puc.poc.dto.user.LoggedUserDTO;
 
 @Component
 public class LoggedUserDTO2EcommerceUserDTOConverter implements IConverter<LoggedUserDTO, EcommerceUserDTO> {

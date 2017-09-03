@@ -1,8 +1,8 @@
-package br.com.herberton.tcc.puc.poc.controller;
+package br.com.herberton.tcc.puc.poc.controller.registration;
 
 import static br.com.herberton.tcc.puc.poc.dto.MessageDTO.ofError;
 import static br.com.herberton.tcc.puc.poc.dto.MessageDTO.ofSuccess;
-import static br.com.herberton.tcc.puc.poc.dto.TicketDTO.from;
+import static br.com.herberton.tcc.puc.poc.dto.TicketDTO.withTicket;
 import static br.com.herberton.tcc.puc.poc.helper.contract.ICookieHelper.TICKET_COOKIE_NAME;
 
 import javax.servlet.http.Cookie;
@@ -16,18 +16,18 @@ import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import br.com.herberton.tcc.puc.poc.business.contract.IAuthenticationBusiness;
-import br.com.herberton.tcc.puc.poc.business.contract.IRegistrationBusiness;
+import br.com.herberton.tcc.puc.poc.business.registration.contract.IEcommerceUserRegistrationBusiness;
 import br.com.herberton.tcc.puc.poc.converter.LoggedUserDTO2EcommerceUserDTOConverter;
-import br.com.herberton.tcc.puc.poc.dto.EcommerceUserDTO;
-import br.com.herberton.tcc.puc.poc.dto.LoggedUserDTO;
 import br.com.herberton.tcc.puc.poc.dto.MessageDTO;
 import br.com.herberton.tcc.puc.poc.dto.TicketDTO;
+import br.com.herberton.tcc.puc.poc.dto.user.EcommerceUserDTO;
+import br.com.herberton.tcc.puc.poc.dto.user.LoggedUserDTO;
 import br.com.herberton.tcc.puc.poc.helper.contract.ICookieHelper;
 import br.com.herberton.tcc.puc.poc.helper.contract.INetworkHelper;
 
 @Controller
-@RequestMapping("/registration")
-public class RegistrationController {
+@RequestMapping("/registration/ecommerce-user")
+public class EcommerceUserController {
 
 	@Autowired
 	private INetworkHelper networkHelper;
@@ -36,7 +36,7 @@ public class RegistrationController {
 	private IAuthenticationBusiness loginBusiness;
 	
 	@Autowired
-	private IRegistrationBusiness registrationBusiness;
+	private IEcommerceUserRegistrationBusiness registrationBusiness;
 
 	@Autowired
 	private LoggedUserDTO2EcommerceUserDTOConverter loggedUserDTO2EcommerceUserDTOConverter;
@@ -45,42 +45,43 @@ public class RegistrationController {
 	private ICookieHelper cookieHelper;
 	
 	
-	@RequestMapping("/ecommerce-user")
+	@RequestMapping("/")
 	public String ecommerceUser(@CookieValue(name=TICKET_COOKIE_NAME, required=false) String ticket, HttpServletRequest request, HttpServletResponse response, Model model) {
 		
 		String networkAddress = networkHelper.getNetworkAddress();
+		LoggedUserDTO loggedUser = loginBusiness.getLoggedUser(withTicket(ticket));
 		
 		MessageDTO message = (MessageDTO)request.getAttribute("message");
-		
 		EcommerceUserDTO ecommerceUser = (EcommerceUserDTO)request.getAttribute("ecommerceUser");
-		
 		TicketDTO newTicket = (TicketDTO)request.getAttribute("newTicket");
 		
-		LoggedUserDTO loggedUser = loginBusiness.getLoggedUser(newTicket == null ? from(ticket) : newTicket);
+		if((loggedUser == null || !loggedUser.getIsAdmin()) && newTicket != null) {
+			
+			loggedUser = loginBusiness.getLoggedUser(newTicket);
+			
+			Cookie cookie = this.cookieHelper.newTicketCookie(newTicket);
+			response.addCookie(cookie);
+			
+		}
 		
 		if(ecommerceUser == null && loggedUser != null && !loggedUser.getIsAdmin()) {
 			ecommerceUser = loggedUserDTO2EcommerceUserDTOConverter.convert(loggedUser);
 		}
 		
-		if (newTicket != null) {
-			Cookie cookie = this.cookieHelper.newTicketCookie(newTicket);
-			response.addCookie(cookie);
-		}
-		
-		model.addAttribute("loggedUser", loggedUser);
 		model.addAttribute("networkAddress", networkAddress);
-		model.addAttribute("message", message);
+		model.addAttribute("loggedUser", loggedUser);
 		model.addAttribute("ecommerceUser", ecommerceUser);
+		model.addAttribute("message", message);
 		
-		return "registration/ecommerce-user";
+		return "registration/ecommerce-user/form";
 		
 	}
 	
 	
-	@RequestMapping("/ecommerce-user/save")
+	@RequestMapping("/form/save")
 	public String saveEcommerceUser(HttpServletRequest request, EcommerceUserDTO ecommerceUser) {
 		
-		String toRegistrationEcommerceUserController = "forward:/registration/ecommerce-user";
+		String toRegistrationEcommerceUserController = "forward:/registration/ecommerce-user/";
 		
 		if(ecommerceUser.isEmpty()) {
 			return toRegistrationEcommerceUserController;

@@ -77,7 +77,7 @@
 									  </button>
 									  <ul class="dropdown-menu">
 									    <li class="dropdown-header">Não possui um login?</li>
-									  	<li><a href="${pageContext.request.contextPath}/registration/ecommerce-user">Cadastre-se</a></li>
+									  	<li><a href="${pageContext.request.contextPath}/registration/ecommerce-user/">Cadastre-se</a></li>
 									  </ul>
 									</div>
 								</form>
@@ -87,7 +87,7 @@
 							<form class="navbar-form navbar-right logout-form" method="post" action="${pageContext.request.contextPath}/logout">
 								<div class="form-group">
 									<p class="navbar-text">
-										<strong class="text-info"><a href="${pageContext.request.contextPath}/registration/ecommerce-user">${loggedUser.login}</a></strong><small>@</small><strong class="text-success">${networkAddress}</strong>
+										<strong class="text-info"><a href="${pageContext.request.contextPath}/registration/ecommerce-user/">${loggedUser.login}</a></strong><small>@</small><strong class="text-success">${networkAddress}</strong>
 									</p>
 								</div>
 								<button type="submit" class="btn btn-danger">Sair</button>

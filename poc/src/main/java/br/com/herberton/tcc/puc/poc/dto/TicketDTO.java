@@ -5,7 +5,8 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 import br.com.herberton.tcc.puc.poc.dto.contract.IDTO;
 
-public class TicketDTO implements IDTO<TicketDTO> {
+public class TicketDTO 
+	implements IDTO<TicketDTO> {
 	
 	private static final long serialVersionUID = -8316725737245529698L;
 	
@@ -59,7 +60,7 @@ public class TicketDTO implements IDTO<TicketDTO> {
 	}
 	
 	
-	public static final TicketDTO from(String value) {
+	public static final TicketDTO withTicket(String value) {
 		return new TicketDTO(value);
 	}
 	

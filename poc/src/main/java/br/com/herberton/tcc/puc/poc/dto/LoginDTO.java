@@ -4,8 +4,10 @@ import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 import br.com.herberton.tcc.puc.poc.dto.contract.IDTO;
+import br.com.herberton.tcc.puc.poc.dto.user.LoggedUserDTO;
 
-public class LoginDTO implements IDTO<LoginDTO> {
+public class LoginDTO 
+	implements IDTO<LoginDTO> {
 	
 	private static final long serialVersionUID = -8316725737245529698L;
 	

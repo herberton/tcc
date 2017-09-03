@@ -1,29 +1,28 @@
 package br.com.herberton.tcc.puc.poc.controller;
 
 import static br.com.herberton.tcc.puc.poc.dto.MessageDTO.ofError;
-import static br.com.herberton.tcc.puc.poc.dto.MessageDTO.ofSuccess;
-import static br.com.herberton.tcc.puc.poc.dto.TicketDTO.from;
+import static br.com.herberton.tcc.puc.poc.dto.TicketDTO.withTicket;
 import static br.com.herberton.tcc.puc.poc.helper.contract.ICookieHelper.TICKET_COOKIE_NAME;
 import static org.apache.commons.lang3.ObjectUtils.defaultIfNull;
 
 import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import br.com.herberton.tcc.puc.poc.business.contract.IAuthenticationBusiness;
-import br.com.herberton.tcc.puc.poc.dto.LoggedUserDTO;
 import br.com.herberton.tcc.puc.poc.dto.LoginDTO;
 import br.com.herberton.tcc.puc.poc.dto.TicketDTO;
+import br.com.herberton.tcc.puc.poc.dto.user.LoggedUserDTO;
 import br.com.herberton.tcc.puc.poc.helper.contract.ICookieHelper;
 
 @Controller
-public class LoginController {
+public class AuthenticationController {
 
 	@Autowired
 	private IAuthenticationBusiness authenticationBusiness;
@@ -33,22 +32,20 @@ public class LoginController {
 
 	
 	@RequestMapping("/login")
-	public String login(@CookieValue(name=TICKET_COOKIE_NAME, required=false) String ticket, HttpServletResponse response, RedirectAttributes redirectAttributes, LoginDTO login, Model model) {
+	public String login(@CookieValue(name=TICKET_COOKIE_NAME, required=false) String ticket, HttpServletRequest request, HttpServletResponse response, RedirectAttributes redirectAttributes, LoginDTO login) {
 		
 		login = defaultIfNull(login, new LoginDTO());
 		
-		redirectAttributes.addAttribute("index", true);
-		
-		String toIndexController = "redirect:index";
-		
-		LoggedUserDTO loggedUser = authenticationBusiness.getLoggedUser(from(ticket));
+		LoggedUserDTO loggedUser = authenticationBusiness.getLoggedUser(withTicket(ticket));
 		
 		if(loggedUser != null) {
 			if(login.isEmpty() || new LoginDTO(loggedUser).equals(login)) {
-				return toIndexController;
+				return this.redirectToIndexController(redirectAttributes);
 			}
-		} else if(login.isEmpty()) {
-			return toIndexController;
+		}
+			
+		if(login.isEmpty()) {
+			return this.redirectToIndexController(redirectAttributes);
 		}
 		
 		try {
@@ -59,23 +56,31 @@ public class LoginController {
 			
 			response.addCookie(cookie);
 			
-			model.addAttribute("message", ofSuccess("Autenticação efetuada com sucesso!"));
+			return this.redirectToIndexController(redirectAttributes);
 			
 		} catch (Exception e) {
 
-			model.addAttribute("message", ofError(e));
+			request.setAttribute("message", ofError(e));
+			
+			return "forward:/index"; // toIndexController;
 			
 		}
 		
-		return toIndexController;
+	}
+	
+	private String redirectToIndexController(RedirectAttributes redirectAttributes) {
 		
+		redirectAttributes.addAttribute("index", true);
+		
+		return "redirect:index";
+	
 	}
 	
 	
 	@RequestMapping("/logout")
 	public String logout(@CookieValue(name=TICKET_COOKIE_NAME, required=false) String ticket, HttpServletResponse response) {
 		
-		authenticationBusiness.logout(from(ticket));
+		authenticationBusiness.logout(withTicket(ticket));
 		
 		Cookie cookie = new Cookie(TICKET_COOKIE_NAME, null);
 		cookie.setPath("/poc");

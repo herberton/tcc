@@ -6,7 +6,7 @@
 <head>
 	<meta name="author" content="Herberon Candido Souza">
 	<poc:import-bootstrap system="ecommerce"/>
-	<poc:import-css path="/resources/css/registration/ecommerce-user.css" />
+	<poc:import-css path="/resources/css/registration/ecommerce-user/form.css" />
 	<title>Agro</title>
 </head>
 	<body>
@@ -24,7 +24,7 @@
 			<form 
 				class="form-horizontal" 
 				method="post" 
-				action="${pageContext.request.contextPath}/registration/ecommerce-user/save">
+				action="${pageContext.request.contextPath}/registration/ecommerce-user/form/save">
 				
 				<input 
 					type="hidden" 
@@ -42,9 +42,9 @@
 							placeholder="CPF"  
 							autocomplete="off"
 							value="${ecommerceUser == null && (loggedUser == null || loggedUser.isAdmin) ? '' : ecommerceUser.cpf}" 
-							${loggedUser == null || loggedUser.isAdmin ? '' : 'readonly'}
 							required
-							pattern="[0-9]{3}([0-9]{3}){2}[0-9]{2}">
+							pattern="[0-9]{3}([0-9]{3}){2}[0-9]{2}"
+							maxlength="11">
 					</div>
 				</div>
 				<div class="form-group">
@@ -58,7 +58,6 @@
 							placeholder="Login" 
 							autocomplete="off"
 							value="${ecommerceUser == null && (loggedUser == null || loggedUser.isAdmin) ? '' : ecommerceUser.login}" 
-							${loggedUser == null || loggedUser.isAdmin ? '' : 'readonly'}
 							required>
 					</div>
 				</div>
@@ -74,35 +73,37 @@
 							value="${ecommerceUser == null && (loggedUser == null || loggedUser.isAdmin) ? '' : ecommerceUser.password}">
 					</div>
 				</div>
-				<div class="form-group">
-					<label for="password" class="col-sm-2 control-label">Deseja se tornar um cliente especial?</label>
-					<div class="col-sm-10 col-md-8">
-						<div class="radio">
-							<label>
-								<input 
-									type="radio" 
-									name="specialCustomer" 
-									id="true"
-									value="true"
-									${ecommerceUser == null && (loggedUser == null || loggedUser.isAdmin) ? '' : ecommerceUser.specialCustomer ? 'checked' : ''}>  
-									Sim
-							</label>
-							<label>
-								<input 
-									type="radio" 
-									name="specialCustomer" 
-									id="false"
-									value="false"
-									${ecommerceUser == null && (loggedUser == null || loggedUser.isAdmin) ? 'checked' : ecommerceUser.specialCustomer ? '' : 'checked'}>  
-									Não
-							</label>
-							<span id="helpBlock" class="help-block">
-								Selecione Sim caso queira acessar os dados nosso sistema diretamente 
-								através do sistema de sua organização.
-							</span>
+				<c:if test="${loggedUser == null || loggedUser.isExternalPartner == false}">
+					<div class="form-group">
+						<label for="password" class="col-sm-2 control-label">Deseja se tornar um cliente especial?</label>
+						<div class="col-sm-10 col-md-8">
+							<div class="radio">
+								<label>
+									<input 
+										type="radio" 
+										name="specialCustomer" 
+										id="true"
+										value="true"
+										${ecommerceUser == null && (loggedUser == null || loggedUser.isAdmin) ? '' : ecommerceUser.specialCustomer ? 'checked' : ''}>  
+										Sim
+								</label>
+								<label>
+									<input 
+										type="radio" 
+										name="specialCustomer" 
+										id="false"
+										value="false"
+										${ecommerceUser == null && (loggedUser == null || loggedUser.isAdmin) ? 'checked' : ecommerceUser.specialCustomer ? '' : 'checked'}>  
+										Não
+								</label>
+								<span id="helpBlock" class="help-block">
+									Selecione Sim caso queira acessar os dados nosso sistema diretamente 
+									através do sistema de sua organização.
+								</span>
+							</div>
 						</div>
 					</div>
-				</div>
+				</c:if>
 				<div class="form-group">
 					<div class="col-sm-offset-2 col-sm-10 col-md-8">
 						<button type="submit" class="btn btn-primary pull-right">
