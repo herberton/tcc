@@ -36,7 +36,7 @@
 							<tr>
 								<td>${role.id}</td>
 								<td>${role.name}</td>
-								<td>${role.type}</td>
+								<td><span class="badge">${role.type}</span></td>
 								<td>
 									<c:if test="${role.canEdit}">
 										<a href="${pageContext.request.contextPath}/registration/role/form?id=${role.id}" class="btn btn-success">Alterar</a>
